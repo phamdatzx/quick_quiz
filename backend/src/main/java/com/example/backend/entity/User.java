@@ -1,5 +1,6 @@
 package com.example.backend.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,6 +31,9 @@ public class User implements UserDetails {
 
   private String username;
 
+  @Column(unique = true)
+  private String email;
+
   private String password;
 
   @Enumerated(EnumType.STRING)
@@ -48,5 +52,9 @@ public class User implements UserDetails {
   @Override
   public String getUsername() {
     return username;
+  }
+
+  public String getEmail() {
+    return email;
   }
 }

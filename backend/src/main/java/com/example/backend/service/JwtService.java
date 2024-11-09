@@ -22,6 +22,9 @@ public class JwtService {
   @Value("${JWT_SECRET}")
   private String SECRET;
 
+  @Value("${jwt.resetPasswordExpirationMs}")
+  private long resetPasswordExpirationMs;
+
   public String generateToken(Map<String, Objects> extraClaims, UserDetails userDetails) {
     return Jwts.builder()
         .setClaims(extraClaims)
@@ -45,7 +48,7 @@ public class JwtService {
     return extractClaim(token, Claims::getSubject);
   }
 
-  public Boolean isTokenValid (String token , UserDetails userDetails) {
+  public Boolean isTokenValid(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
@@ -58,7 +61,7 @@ public class JwtService {
     return extractClaim(token, Claims::getExpiration);
   }
 
-  public <T> T extractClaim(String token, Function<Claims,T> claimResolver) {
+  public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
     final Claims claims = extractAllClaims(token);
     return claimResolver.apply(claims);
   }
@@ -76,4 +79,18 @@ public class JwtService {
     byte[] keyBytes = Decoders.BASE64.decode(SECRET);
     return Keys.hmacShaKeyFor(keyBytes);
   }
+
+  public String generateResetToken(UserDetails userDetails) {
+    return Jwts.builder()
+        .setSubject(userDetails.getUsername()) // Subject là email của người dùng
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + resetPasswordExpirationMs))
+        .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+        .compact();
+  }
+
+  public String extractEmail(String token) {
+    return extractClaim(token, Claims::getSubject);
+  }
+
 }
