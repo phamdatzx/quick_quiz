@@ -6,6 +6,8 @@ import com.example.backend.authenticate.AuthenticationService;
 import com.example.backend.authenticate.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,10 @@ public class AuthenticateController {
   @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
     return ResponseEntity.ok(service.authenticate(authenticationRequest));
+  }
+
+  @GetMapping("/activate/{token}")
+  public String ActivateEmail(@PathVariable String token) {
+    return service.activateEmail(token);
   }
 }
