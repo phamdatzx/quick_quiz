@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import "../../config/customizations/uicustomization.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -108,8 +109,12 @@ export default function SignInCard() {
   //   };
 
   return (
-    <Card variant="basic">
-      <Box sx={{ display: { xs: "flex", md: "none" } }}></Box>
+    <Card variant="basic" sx={{ boxShadow: "none", display:"flex" }}>
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+        }}
+      ></Box>
       <Typography
         component="h1"
         variant="h4"
@@ -138,35 +143,24 @@ export default function SignInCard() {
         <FormControl>
           <FormLabel htmlFor="email">Email</FormLabel>
           <TextField
-            /* error={emailError}
+          /* error={emailError}
                 helperText={emailErrorMessage} */
-            id="email"
-            type="email"
-            name="email"
-            placeholder="your@email.com"
-            autoComplete="email"
-            autoFocus
-            required
-            fullWidth
-            variant="outlined"
-            color={/* emailError ? 'error' : */ "primary"}
-            sx={{
-              ariaLabel: "email",
-              mb: 2,
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              borderRadius: "8px",
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                "& fieldset": {
-                  borderColor: "white",
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                backgroundColor: "white",
-              },
-            }}
-            /* onChange={(e) => setEmail(e.target.value)} */
+
+          id="email"
+          type="email"
+          name="email"
+          placeholder="your@email.com"
+          autoComplete="email"
+          autoFocus
+          required
+          // fullWidth
+          // variant="outlined"
+          // color={/* emailError ? 'error' : */ "primary"}
+          sx={{
+            ariaLabel: "email",
+            
+          }}
+          /* onChange={(e) => setEmail(e.target.value)} */
           />
         </FormControl>
         <FormControl>
@@ -229,24 +223,19 @@ export default function SignInCard() {
             Quên mật khẩu?
           </Link>
         </Box>
+
         {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
+
         <Button
+          className="Button"
           type="submit"
           fullWidth
           variant="contained"
           /* onClick={handleSignIn} 
               disabled={loading}  */
-                  sx={{
-              height:'56px',
+          sx={{
+            height: "54px",
             my: 2,
-            bgcolor: "#1a73e8",
-            color: "#fff",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            "&:hover": {
-              border: "none",
-              bgcolor: "#185abc",
-            },
           }}
         >
           {/* loading ? 'Đang đăng nhập...' :  */ "Đăng nhập"}
@@ -261,29 +250,23 @@ export default function SignInCard() {
           </span>
         </Typography>
       </Box>
+
       <Divider>hoặc</Divider>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2,
-       }}>
-              <Button type="submit" fullWidth variant="outlined" /* onClick={() => signInWithGoogle()} startIcon={<GoogleIcon />} */
-                  sx={{
-                      height:'56px',
-                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-                      borderRadius: "8px",
-                    borderColor:'white',
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                      "& fieldset": {
-                        borderColor: "white",
-                        "&:hover fieldset": {
-                          borderColor: "white",
-                        },
-                      },
-                      backgroundColor: "white",
-                    },
-              }}>
-              Đăng nhập với Google
-            </Button>
-          </Box>
+
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Button
+          type="submit"
+          fullWidth
+          variant="outlined" /* onClick={() => signInWithGoogle()} startIcon={<GoogleIcon />} */
+          sx={
+            {
+             height:  "54px",
+            }
+          }
+        >
+          Đăng nhập với Google
+        </Button>
+      </Box>
     </Card>
   );
 }
