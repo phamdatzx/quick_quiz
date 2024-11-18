@@ -8,6 +8,8 @@ import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import theme from "./config/customizations/uicustomization";
 
+const Sidebar = lazy(() => import("./components/Sidebar"));
+const Header = lazy(()=> import("./components/Header"));
 const SignIn = lazy(() => import("./pages/signin/SignIn"));
 const SignUp = lazy(() => import("./pages/signup/SignUp"));
 const ForgotPassword = lazy(() => import("./pages/forgotpassword/ForgotPassword"));
@@ -15,6 +17,7 @@ const ResetPassword = lazy(()=> import("./pages/resetpassword/ResetPassword"))
 const Test = lazy(() => import("./pages/TestingComponent"));
 
 function App() {
+  let isAuthenticated = true;
   return (
     <BrowserRouter>
       <Suspense
@@ -25,9 +28,9 @@ function App() {
           </div>} >
         <ThemeProvider theme={theme}>
           <Box display={"flex"}>
-            {/* {isAuthenticated && <Sidebar />} */}
+            {isAuthenticated && <Sidebar />}
             <Box flex={1}>
-              {/* {!isAuthenticated && <Header />} */}
+              {isAuthenticated && <Header />}
               <Routes>
                 <Route path="/SignIn" element={<SignIn />} />
                 <Route path="/SignUp" element={<SignUp />} />
