@@ -30,7 +30,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
 }));
 
-export default function SignInCard() {
+export default function SignUpCard() {
   //     const [emailError, setEmailError] = React.useState(false);
   //   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   //   const [passwordError, setPasswordError] = React.useState(false);
@@ -126,7 +126,7 @@ export default function SignInCard() {
         }}
         /* disabled={loading} */
       >
-        Đăng nhập
+        Đăng ký
         {/* {loading && '...'} */}
       </Typography>
       <Box
@@ -163,6 +163,7 @@ export default function SignInCard() {
           /* onChange={(e) => setEmail(e.target.value)} */
           />
         </FormControl>
+
         <FormControl>
           <Box
             sx={{
@@ -179,7 +180,6 @@ export default function SignInCard() {
             placeholder="••••••"
             type="password"
             id="password"
-            autoComplete="current-password"
             autoFocus
             required
             fullWidth
@@ -192,25 +192,36 @@ export default function SignInCard() {
             }}
           />
         </FormControl>
-        <Box
-          sx={{
-            justifyContent: "space-between",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Ghi nhớ tôi"
-          />
-          <Link
-            /* onClick={handleClickOpen} */ variant="body2"
-            role="link"
-            sx={{ cursor: "pointer" }}
+
+        <FormControl>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            Quên mật khẩu?
-          </Link>
-        </Box>
+            <FormLabel htmlFor="password">Nhập lại mật khẩu</FormLabel>
+          </Box>
+          <TextField
+            /* error={passwordError}
+                helperText={passwordErrorMessage} */
+            name="passwordReEnter"
+            placeholder="••••••"
+            type="password"
+            id="passwordReEnter"
+            autoFocus
+            required
+            fullWidth
+            variant="outlined"
+            color={/* passwordError ? 'error' :  */ "primary"}
+            /* onChange={(e) => setPassword(e.target.value)} */
+            sx={{
+              ariaLabel: "password",
+              mb: 2,
+            }}
+          />
+        </FormControl>
+
 
         {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
 
@@ -226,34 +237,17 @@ export default function SignInCard() {
             my: 2,
           }}
         >
-          {/* loading ? 'Đang đăng nhập...' :  */ "Đăng nhập"}
+          {/* loading ? 'Đang đăng ký...' :  */ "Đăng ký"}
         </Button>
 
         <Typography sx={{ textAlign: "center" }}>
-          Chưa có tài khoản?{" "}
+          Đã có tài khoản?{" "}
           <span>
-            <Link href="/signup/" variant="body2" sx={{ alignSelf: "center" }}>
-              Đăng ký
+            <Link href="/signin/" variant="body2" sx={{ alignSelf: "center" }}>
+              Đăng nhập
             </Link>
           </span>
         </Typography>
-      </Box>
-
-      <Divider>hoặc</Divider>
-
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Button
-          type="submit"
-          fullWidth
-          variant="outlined" /* onClick={() => signInWithGoogle()} startIcon={<GoogleIcon />} */
-          sx={
-            {
-             height:  "54px",
-            }
-          }
-        >
-          Đăng nhập với Google
-        </Button>
       </Box>
     </Card>
   );

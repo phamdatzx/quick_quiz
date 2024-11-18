@@ -2,11 +2,12 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Box, ThemeProvider } from "@mui/material";
+import LinearProgress from '@mui/material/LinearProgress';
 import { BrowserRouter } from 'react-router-dom';
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import theme from "./config/customizations/uicustomization";
-// const SignIn = lazy(() => import("./pages/signin/SignIn"));
+
 const SignIn = lazy(() => import("./pages/signin/SignIn"));
 const SignUp = lazy(() => import("./pages/signup/SignUp"));
 const ForgotPassword = lazy(() => import("./pages/forgotpassword/ForgotPassword"));
@@ -16,22 +17,26 @@ const Test = lazy(() => import("./pages/TestingComponent"));
 function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={<div>
+            <Box sx={{ position: "absolute", width: "100vw", top: "45%" }}>
+              <LinearProgress sx={{ height: "10vh" }} />
+            </Box>
+          </div>} >
         <ThemeProvider theme={theme}>
-        <Box display={'flex'}>
-          {/* {isAuthenticated && <Sidebar />} */}
-          <Box flex={1}>
-            {/* {!isAuthenticated && <Header />} */}
-            <Routes>
-              <Route path="/SignIn" element={<SignIn />} />
+          <Box display={"flex"}>
+            {/* {isAuthenticated && <Sidebar />} */}
+            <Box flex={1}>
+              {/* {!isAuthenticated && <Header />} */}
+              <Routes>
+                <Route path="/SignIn" element={<SignIn />} />
                 <Route path="/SignUp" element={<SignUp />} />
                 <Route path="/ForgotPassword" element={<ForgotPassword />} />\
-                <Route path="/Reset" element={<ResetPassword/>} />
-            </Routes>
+                <Route path="/Reset" element={<ResetPassword />} />
+              </Routes>
+            </Box>
           </Box>
-        </Box>
         </ThemeProvider>
-        
       </Suspense>
     </BrowserRouter>
   );
