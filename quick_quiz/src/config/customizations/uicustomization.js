@@ -96,6 +96,7 @@ const theme = createTheme({
         root: {
           // TextField Style
           backgroundColor: '#fff', 
+          fontFamily: 'Lexend',
           borderRadius: '10px', 
           boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
           
@@ -143,6 +144,38 @@ const theme = createTheme({
           color: '#1935CA',
           fontSize: '0.75rem', 
           padding: '8px',
+        },
+      },
+    },
+
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 10,
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+          padding: 2,
+          backgroundColor: '#f9f9f9',
+        },
+      },
+    },
+    
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          fontSize: '16px',
+          fontFamily: 'Lexend',
+          padding: '10px 20px',
+          '&:hover': {
+            backgroundColor: '#1935CA30',
+            borderRadius: 10,
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#1935CA30',
+            color: '#006064',
+            '&:hover': {
+              backgroundColor: '#1935CA30',
+            },
+          },
         },
       },
     },
