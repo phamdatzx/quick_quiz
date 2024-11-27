@@ -30,6 +30,8 @@ public class AttemptDetail {
   @JoinColumn(name = "quiz_id")
   private Quiz quiz;
 
+
+
   String answer;
 
   boolean isCorrect;

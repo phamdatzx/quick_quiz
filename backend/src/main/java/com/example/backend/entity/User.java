@@ -54,7 +54,7 @@ public class User implements UserDetails {
   private List<QuizSet> quizSets;
 
   @OneToMany(mappedBy = "user",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  List<AttemptDetail> attemptDetails;
+  private List<QuizSetAttempt> quizSetAttempts;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

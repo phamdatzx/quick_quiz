@@ -5,6 +5,7 @@ import com.example.backend.entity.Quiz;
 import com.example.backend.repository.QuizRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import java.util.Arrays;
@@ -27,6 +28,11 @@ public class BackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
+	}
+
+	@Bean
+	public ModelMapper getModelMapper() {
+		return new ModelMapper();
 	}
 
 	@Bean
