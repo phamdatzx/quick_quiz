@@ -58,7 +58,7 @@ export default function Header() {
           sx={{
             justifyContent: "center",
               height: "80%",
-              width:'80%',
+              width:'90%',
             minWidth:'10%',
           }}
         ></TextField>
