@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import QuizCard from '../../components/QuizCard';
+import React, { useState } from "react";
+import QuizCard from "../../components/QuizCard";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const Quiz = () => {
@@ -32,7 +32,9 @@ const Quiz = () => {
   ];
 
   // State để lưu câu trả lời của người dùng
-  const [userAnswers, setUserAnswers] = useState(Array(quizzes.length).fill(null));
+  const [userAnswers, setUserAnswers] = useState(
+    Array(quizzes.length).fill(null)
+  );
 
   // Hàm xử lý chọn câu trả lời
   const handleSelectAnswer = (quizIndex, choiceIndex) => {
@@ -47,7 +49,7 @@ const Quiz = () => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, justifyItems: "center" }}>
       {quizzes.map((quiz, index) => (
         <QuizCard
           key={index}
@@ -59,13 +61,13 @@ const Quiz = () => {
       ))}
       <Button
         variant="contained"
-        sx={{ mt: 2 }}
+        sx={{ mt: 2, height: "10vh", width: "60vw" }}
         onClick={handleSubmit}
       >
         Nộp bài
       </Button>
     </Box>
   );
-}
+};
 
-export default Quiz
+export default Quiz;

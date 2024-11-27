@@ -70,7 +70,7 @@ const QuizCard = ({ question, choices, onSelectAnswer, index }) => {
               key={choiceIndex}
               variant="outlined"
               sx={{
-                // width: "45%",
+                width: "45%",
                 wordBreak: "break-word",
                 textAlign: "justify",
                 backgroundColor:

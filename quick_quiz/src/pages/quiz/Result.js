@@ -14,7 +14,7 @@ const Result = () => {
   );
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, justifyItems: "center" }}>
       <Box
         sx={{
           display: "flex",
@@ -23,14 +23,16 @@ const Result = () => {
           flexDirection: "column",
           gap: 2,
           borderRadius: 4,
-          backgroundColor: "#fff",
+          backgroundColor: "#1935CA",
           boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-          maxWidth: "60vw",
-          justifySelf: "center",
+          width: "60vw",
+          textAlign: "center",
         }}
       >
-        <Typography variant="h5">Kết quả làm bài</Typography>
-        <Typography sx={{ mt: 2 }}>
+        <Typography variant="h4" sx={{ color: "#fff" }}>
+          Kết quả làm bài
+        </Typography>
+        <Typography sx={{ mt: 1, color: "#fff" }}>
           Bạn đã trả lời đúng {correctCount}/{quizzes.length} câu.
         </Typography>
       </Box>
@@ -58,7 +60,7 @@ const Result = () => {
             <Typography variant="subtitle1">Đáp án của bạn: </Typography>
             <Box
               sx={{
-                fontFamily: 'Lexend',
+                fontFamily: "Lexend",
                 border: "none",
                 borderRadius: 2,
                 backgroundColor:
@@ -76,7 +78,7 @@ const Result = () => {
             <Typography variant="subtitle1">Đáp án đúng: </Typography>
             <Box
               sx={{
-                fontFamily: 'Lexend',
+                fontFamily: "Lexend",
                 border: "none",
                 borderRadius: 2,
                 backgroundColor: "#fff",
@@ -94,7 +96,7 @@ const Result = () => {
 
       <Button
         variant="contained"
-        sx={{ mt: 2 }}
+        sx={{ mt: 2, height: "10vh", width: "60vw" }}
         onClick={() => navigate("/quizpage")}
       >
         Làm lại
