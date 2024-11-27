@@ -22,6 +22,8 @@ public class JwtService {
   @Value("${JWT_SECRET}")
   private String SECRET;
 
+
+
   public String generateToken(Map<String, Objects> extraClaims, UserDetails userDetails) {
     return Jwts.builder()
         .setClaims(extraClaims)
