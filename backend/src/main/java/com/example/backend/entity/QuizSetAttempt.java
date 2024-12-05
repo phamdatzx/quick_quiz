@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +37,8 @@ public class QuizSetAttempt {
   private int numberOfCorrectAnswers;
 
   private int attempt;
+
+  private Date practiceTime;
 
   @OneToMany(mappedBy = "quizSetAttempt", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   private List<AttemptDetail> attemptDetails;

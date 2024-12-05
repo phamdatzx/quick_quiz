@@ -1,8 +1,8 @@
 package com.example.backend.service;
 
-import com.example.backend.DTO.AuthenticationRequest;
-import com.example.backend.DTO.AuthenticationResponse;
-import com.example.backend.DTO.RegisterRequest;
+import com.example.backend.DTO.Auth.AuthenticationRequest;
+import com.example.backend.DTO.Auth.AuthenticationResponse;
+import com.example.backend.DTO.Auth.RegisterRequest;
 import com.example.backend.entity.Role;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;

@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,9 +32,7 @@ public class QuizSet {
 
   private String description;
 
-  private String createdTime;
-
-  private String lastUpdatedTime;
+  private Date createdTime;
 
   private int totalQuestions;
 

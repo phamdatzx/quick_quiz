@@ -1,6 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.DTO.TopicDTO;
+import com.example.backend.DTO.Topic.TopicDTO;
 import com.example.backend.service.TopicService;
 import java.security.Principal;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class TopicController {
   private final TopicService topicService;
 
   @PostMapping("/topic")
-  public ResponseEntity<String> createTopic(Principal principal,@RequestBody TopicDTO topicDTO) {
+  public ResponseEntity<TopicDTO> createTopic(Principal principal,@RequestBody TopicDTO topicDTO) {
     return topicService.createTopic(principal.getName(),topicDTO);
   }
 
@@ -31,7 +31,7 @@ public class TopicController {
   }
 
   @PatchMapping("/topic/{id}")
-  public ResponseEntity<String> updateTopic(Principal principal,@PathVariable int id,@RequestBody TopicDTO topicDTO) {
+  public ResponseEntity<TopicDTO> updateTopic(Principal principal,@PathVariable int id,@RequestBody TopicDTO topicDTO) {
     return topicService.updateTopic(principal.getName(),id,topicDTO);
   }
 }

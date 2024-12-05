@@ -6,6 +6,7 @@ import com.example.backend.exception.ForbiddenException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.exception.ValidationException;
 import java.time.LocalDateTime;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,5 +31,10 @@ public class ExceptionControllerHandler {
   @ExceptionHandler(ForbiddenException.class)
   public ResponseEntity<ErrorDTO> handleForbiddenException(ForbiddenException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage(), LocalDateTime.now()));
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<String> handleException(Exception e) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
   }
 }

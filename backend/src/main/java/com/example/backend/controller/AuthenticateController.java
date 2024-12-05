@@ -1,9 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.DTO.AuthenticationRequest;
-import com.example.backend.DTO.AuthenticationResponse;
+import com.example.backend.DTO.Auth.AuthenticationRequest;
+import com.example.backend.DTO.Auth.AuthenticationResponse;
 import com.example.backend.service.AuthenticationService;
-import com.example.backend.DTO.RegisterRequest;
+import com.example.backend.DTO.Auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
