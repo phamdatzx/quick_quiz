@@ -41,8 +41,6 @@ public class Quiz {
 
   private Date createdAt=new Date();
 
-  private Date lastUpdate=new Date();
-
   @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name="quiz_set_id")
   private QuizSet quizSet;

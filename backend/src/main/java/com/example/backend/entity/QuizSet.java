@@ -2,6 +2,7 @@ package com.example.backend.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -36,14 +37,18 @@ public class QuizSet {
 
   private int totalQuestions;
 
-  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "creator_id")
   private User creator;
 
-  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "topic_id")
   private Topic topic;
 
-  @OneToMany(mappedBy = "quizSet", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "quizSet", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
   private List<Quiz> quizList;
+
+  public void addQuiz(Quiz quiz) {
+    quizList.add(quiz);
+  }
 }

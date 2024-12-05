@@ -1,4 +1,4 @@
-package com.example.backend.authenticate;
+package com.example.backend.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
+public class RegisterRequest {
   private String email;
   private String password;
   private String name;

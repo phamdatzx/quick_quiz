@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class QuizSetDTO {
+public class QuizSetResponseDTO {
+  private int id;
+
   private String name;
 
   private String description;
