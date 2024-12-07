@@ -38,6 +38,11 @@ public class QuizSetService {
     return ListQuizSetDTO.builder().quizSets(allQuizSetsResponseDTO).build();
   }
 
+  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(int id) {
+    return null;
+
+  }
+
   public ResponseEntity<QuizSetResponseDTO> createQuizSet(String email, QuizSetRequestDTO quizSetRequestDTO) {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("User not found"));

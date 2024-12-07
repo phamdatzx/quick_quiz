@@ -4,52 +4,34 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.Date;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "quiz_set")
+@Table(name = "quiz_set_permission")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuizSet {
-
+public class QuizSetPermission {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private int id;
 
-  private String name;
-
-  private String description;
-
-  private Date createdTime;
-
-  private int totalQuestions;
-
-  private boolean isPublic;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "user_id")
+  private User user;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "creator_id")
-  private User creator;
+  @JoinColumn(name = "quiz_set_id")
+  private QuizSet quizSet;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "topic_id")
-  private Topic topic;
-
-  @OneToMany(mappedBy = "quizSet", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-  private List<Quiz> quizList;
-
-  public void addQuiz(Quiz quiz) {
-    quizList.add(quiz);
-  }
 }

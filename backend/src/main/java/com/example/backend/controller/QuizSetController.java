@@ -29,6 +29,11 @@ public class QuizSetController {
     return quizSetService.getAllQuizSetsByUserEmail(principal.getName());
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(@PathVariable int id) {
+      return quizSetService.getQuizSetById(id);
+  }
+
   @PostMapping
   public ResponseEntity<QuizSetResponseDTO> createQuizSet(Principal principal,@RequestBody QuizSetRequestDTO quizSetRequestDTO) {
       return quizSetService.createQuizSet(principal.getName(), quizSetRequestDTO);
