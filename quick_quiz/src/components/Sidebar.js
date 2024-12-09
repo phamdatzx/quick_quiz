@@ -13,6 +13,7 @@ import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import KeyboardDoubleArrowLeftRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowLeftRounded";
 import KeyboardDoubleArrowRightRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import SidebarItem from "./SideBarItem";
 export default function Sidebar() {
   const [openSideBar, setOpenSideBar] = useState(true);
@@ -37,20 +38,27 @@ export default function Sidebar() {
         type: "home",
         icon: <HomeRoundedIcon />,
         title: "Trang chủ",
-        href: "/user/home",
+        href: "/home",
       },
       {
         type: "library",
         icon: <AutoStoriesRoundedIcon />,
         title: "Thư viện của bạn",
-        href: "/user/library",
+        href: "/library",
+      },
+      {
+        type: "create",
+        icon: <DriveFileRenameOutlineIcon />,
+        title: "Tạo quiz",
+        href: "/create",
       },
       {
         type: "history",
         icon: <HistoryRoundedIcon />,
         title: "Lịch sử làm bài",
-        href: "/user/history",
-      }
+        href: "/history",
+      },
+      
     );
 
     return items;

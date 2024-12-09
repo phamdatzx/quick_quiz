@@ -30,7 +30,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
 }));
 
-export default function SignUpCard() {
+const SignUpCard = () => {
   //     const [emailError, setEmailError] = React.useState(false);
   //   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   //   const [passwordError, setPasswordError] = React.useState(false);
@@ -252,3 +252,5 @@ export default function SignUpCard() {
     </Card>
   );
 }
+
+export default SignUpCard;
