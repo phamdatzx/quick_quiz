@@ -30,7 +30,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
 }));
 
-const SignInCard = () => {
+export default function ResetPasswordCard() {
   //     const [emailError, setEmailError] = React.useState(false);
   //   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   //   const [passwordError, setPasswordError] = React.useState(false);
@@ -126,7 +126,7 @@ const SignInCard = () => {
         }}
         /* disabled={loading} */
       >
-        Đăng nhập
+        Đặt lại mật khẩu
         {/* {loading && '...'} */}
       </Typography>
       <Box
@@ -141,36 +141,13 @@ const SignInCard = () => {
         }}
       >
         <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
-          <TextField
-          /* error={emailError}
-                helperText={emailErrorMessage} */
-
-          id="email"
-          type="email"
-          name="email"
-          placeholder="your@email.com"
-          autoComplete="email"
-          autoFocus
-          required
-          // fullWidth
-          // variant="outlined"
-          // color={/* emailError ? 'error' : */ "primary"}
-          sx={{
-            ariaLabel: "email",
-            
-          }}
-          /* onChange={(e) => setEmail(e.target.value)} */
-          />
-        </FormControl>
-        <FormControl>
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
             }}
           >
-            <FormLabel htmlFor="password">Mật khẩu</FormLabel>
+            <FormLabel htmlFor="password">Mật khẩu mới</FormLabel>
           </Box>
           <TextField
             /* error={passwordError}
@@ -192,26 +169,37 @@ const SignInCard = () => {
             }}
           />
         </FormControl>
-        <Box
-          sx={{
-            justifyContent: "space-between",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Ghi nhớ tôi"
-          />
-          <Link
-            href="/forgotpassword"
-            variant="body2"
-            role="link"
-            sx={{ cursor: "pointer" }}
+
+        <FormControl>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            Quên mật khẩu?
-          </Link>
-        </Box>
+            <FormLabel htmlFor="password">Xác nhận mật khẩu mới</FormLabel>
+          </Box>
+          <TextField
+            /* error={passwordError}
+                helperText={passwordErrorMessage} */
+            name="password"
+            placeholder="••••••"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            autoFocus
+            required
+            fullWidth
+            variant="outlined"
+            color={/* passwordError ? 'error' :  */ "primary"}
+            /* onChange={(e) => setPassword(e.target.value)} */
+            sx={{
+              ariaLabel: "password",
+              mb: 2,
+            }}
+          />
+        </FormControl>
+        
 
         {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
 
@@ -227,17 +215,10 @@ const SignInCard = () => {
             my: 2,
           }}
         >
-          {/* loading ? 'Đang đăng nhập...' :  */ "Đăng nhập"}
+          {/* loading ? 'Đang đăng nhập...' :  */ "Đặt lại mật khẩu"}
         </Button>
 
-        <Typography sx={{ textAlign: "center" }}>
-          Chưa có tài khoản?{" "}
-          <span>
-            <Link href="/signup/" variant="body2" sx={{ alignSelf: "center" }}>
-              Đăng ký
-            </Link>
-          </span>
-        </Typography>
+        
       </Box>
 
       <Divider>hoặc</Divider>
@@ -246,18 +227,17 @@ const SignInCard = () => {
         <Button
           type="submit"
           fullWidth
-          variant="outlined" /* onClick={() => signInWithGoogle()} startIcon={<GoogleIcon />} */
+          variant="outlined"
+          href="/signin"
           sx={
             {
              height:  "54px",
             }
           }
         >
-          Đăng nhập với Google
+          Quay lại đăng nhập
         </Button>
       </Box>
     </Card>
   );
 }
-
-export default SignInCard;
