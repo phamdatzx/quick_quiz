@@ -7,6 +7,10 @@ import { BrowserRouter } from 'react-router-dom';
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import theme from "./config/customizations/uicustomization";
+import Home from "./pages/home/Home";
+import QuizCreate from "./pages/quiz/QuizCreate";
+import Library from "./pages/library/Library";
+
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
 const Header = lazy(()=> import("./components/Header"));
@@ -39,8 +43,11 @@ function App() {
                 <Route path="/ForgotPassword" element={<ForgotPassword />} />\
                 <Route path="/Reset" element={<ResetPassword />} />
                 <Route path="/test" element={<Test />} />
-                <Route path="/quizpage" element={<Quiz />} />
-        <Route path="/result" element={<Result />} />
+                <Route path="/quiz/:id" element={<Quiz />} />
+                <Route path="/create" element={<QuizCreate />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/library" element={<Library/>} />
+                <Route path="/result" element={<Result />} />
               </Routes>
             </Box>
           </Box>

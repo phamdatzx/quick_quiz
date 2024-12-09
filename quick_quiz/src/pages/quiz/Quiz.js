@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import QuizCard from "../../components/QuizCard";
 import { Box, Button, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const Quiz = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  // const [quizzes, setQuizzes] = useState(null);
+  
 
   // Mock dữ liệu câu hỏi
   const quizzes = [

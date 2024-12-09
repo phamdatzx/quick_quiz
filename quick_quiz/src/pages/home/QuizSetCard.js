@@ -10,13 +10,11 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const QuizSetCard = (/* title, questionCount */) => {
-  const title = "123123132132";
-  const questionCount = "12";
+const QuizSetCard = ({ title, questionCount, quizId }) => {
 
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/quizpage");
+    navigate(`/quiz/${quizId}`);
   };
   return (
     <Card

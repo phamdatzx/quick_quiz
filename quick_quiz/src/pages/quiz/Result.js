@@ -97,7 +97,7 @@ const Result = () => {
       <Button
         variant="contained"
         sx={{ mt: 2, height: "10vh", width: "60vw" }}
-        onClick={() => navigate("/quizpage")}
+        onClick={() => navigate("/home")}
       >
         Làm lại
       </Button>
