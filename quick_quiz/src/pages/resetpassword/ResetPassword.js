@@ -2,7 +2,7 @@ import * as React from "react";
 import theme from "../../config/customizations/uicustomization";
 import { Box, Stack, TextField, Typography, Button, ThemeProvider } from "@mui/material";
 import background from '../../assets/images/background.png';
-import ResetPasswordCard from './ReserPasswordCard';
+import ResetPasswordCard from './ResetPasswordCard';
 
 
 function ResetPassword() {
@@ -30,7 +30,7 @@ function ResetPassword() {
             backgroundPosition: "center",
                 filter: "blur(8px)", 
                 
-            zIndex: -1,
+            zIndex: 0,
           }}
             />
             
@@ -43,7 +43,7 @@ function ResetPassword() {
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: -1,
+            zIndex: 0,
           }}
         ></div>
   

@@ -204,7 +204,8 @@ const SignInCard = () => {
             label="Ghi nhớ tôi"
           />
           <Link
-            /* onClick={handleClickOpen} */ variant="body2"
+            href="/forgotpassword"
+            variant="body2"
             role="link"
             sx={{ cursor: "pointer" }}
           >

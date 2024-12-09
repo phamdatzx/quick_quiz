@@ -191,7 +191,8 @@ export default function ForgotPasswordCard() {
         <Button
           type="submit"
           fullWidth
-          variant="outlined" /* onClick={() => signInWithGoogle()} startIcon={<GoogleIcon />} */
+          variant="outlined"
+          href="/signin"
           sx={
             {
              height:  "54px",

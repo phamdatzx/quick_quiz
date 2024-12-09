@@ -41,7 +41,7 @@ function App() {
                 <Route path="/SignIn" element={<SignIn />} />
                 <Route path="/SignUp" element={<SignUp />} />
                 <Route path="/ForgotPassword" element={<ForgotPassword />} />\
-                <Route path="/Reset" element={<ResetPassword />} />
+                <Route path="/ResetPassword" element={<ResetPassword />} />
                 <Route path="/test" element={<Test />} />
                 <Route path="/quiz/:id" element={<Quiz />} />
                 <Route path="/create" element={<QuizCreate />} />
