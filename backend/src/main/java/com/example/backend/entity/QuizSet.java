@@ -36,7 +36,7 @@ public class QuizSet {
 
   private int totalQuestions;
 
-  private boolean isPublic;
+  private boolean isPublic=true;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "creator_id")

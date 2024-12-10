@@ -1,5 +1,7 @@
 package com.example.backend.DTO.Topic;
 
+import com.example.backend.DTO.QuizSet.ListQuizSetDTO;
+import com.example.backend.DTO.QuizSet.QuizSetResponseDTO;
 import lombok.Data;
 
 @Data
