@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Grid, Typography } from "@mui/material";
-import QuizSetCard from "../home/QuizSetCard";
+import QuizSetCard from "../quizset/QuizSetCard";
 
 
-const Library = () => {
+const Topic = () => {
   const [quizSets, setQuizSets] = useState([
     // Sample data
     { id: 1, title: "Math Quiz", questionCount: 10 },
@@ -68,4 +68,4 @@ const Library = () => {
     </Box>
   );
 };
-export default Library;
+export default Topic;

@@ -9,7 +9,9 @@ import PublicRoute from "./routes/PublicRoute";
 import theme from "./config/customizations/uicustomization";
 import Home from "./pages/home/Home";
 import QuizCreate from "./pages/quiz/QuizCreate";
-import Library from "./pages/library/Library";
+import Topic from "./pages/topic/Topic";
+import QuizSetLibrary from "./pages/quizset/QuizSetLibrary";
+import History from "./pages/history/History";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -20,7 +22,7 @@ const ForgotPassword = lazy(() => import("./pages/forgotpassword/ForgotPassword"
 const ResetPassword = lazy(() => import("./pages/resetpassword/ResetPassword")) 
 const Quiz = lazy(() => import("./pages/quiz/Quiz"));
 const Result = lazy(() => import("./pages/quiz/Result"));
-const Test = lazy(() => import("./pages/home/QuizSetCard"));
+const Test = lazy(() => import("./pages/quizset/QuizSetCard"));
 
 function App() {
   let isAuthenticated = true;
@@ -46,8 +48,10 @@ function App() {
                 <Route path="/quiz/:id" element={<Quiz />} />
                 <Route path="/create" element={<QuizCreate />} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/library" element={<Library/>} />
+                <Route path="/topic" element={<Topic/>} />
                 <Route path="/result" element={<Result />} />
+                <Route path="/quizsetlibrary" element={<QuizSetLibrary />} />
+                <Route path="/history" element={<History />} />
               </Routes>
             </Box>
           </Box>
