@@ -44,6 +44,7 @@ import {
             }}
           >
             <Typography
+              variant="subtitle1"
               sx={{
                 paddingBottom: 1,
               }}

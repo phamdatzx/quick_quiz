@@ -43,7 +43,7 @@ import {
             }}
           >
             <Typography
-              variant="h6"
+              variant="subtitle1"
               sx={{
                 paddingBottom: 1,
                 fontWeight: "bold",
@@ -52,7 +52,7 @@ import {
               {title}
             </Typography>
             <Typography
-              variant="body2"
+              variant="body1"
               color="text.secondary"
               sx={{
                 paddingBottom: 1,

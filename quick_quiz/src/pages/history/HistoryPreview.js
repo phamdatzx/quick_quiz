@@ -24,10 +24,10 @@ const HistoryPreview = ({ quizsetId, attemptTime, attemptId }) => {
     >
       <CardActionArea onClick={handleClick}>
         <CardContent>
-          <Typography variant="h6" sx={{ paddingBottom: 1, fontWeight: "bold" }}>
+          <Typography variant="subtitle1" sx={{ paddingBottom: 1, fontWeight: "bold" }}>
             Quiz Set ID: {quizsetId}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body1" color="text.secondary">
             Thời gian làm bài: {new Date(attemptTime).toLocaleString()}
           </Typography>
         </CardContent>
