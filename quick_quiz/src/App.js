@@ -8,10 +8,12 @@ import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import theme from "./config/customizations/uicustomization";
 import Home from "./pages/home/Home";
-import QuizCreate from "./pages/quiz/QuizCreate";
+import QuizCreate from "./pages/quizset/QuizCreate";
 import Topic from "./pages/topic/Topic";
 import QuizSetLibrary from "./pages/quizset/QuizSetLibrary";
 import History from "./pages/history/History";
+import TopicView from "./pages/topic/TopicView";
+import QuizSetView from "./pages/quizset/QuizSetView";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -47,11 +49,13 @@ function App() {
                 <Route path="/test" element={<Test />} />
                 <Route path="/quiz/:id" element={<Quiz />} />
                 <Route path="/create" element={<QuizCreate />} />
+                <Route path="/quizsetview/:id" element={<QuizSetView/>} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/topic" element={<Topic/>} />
                 <Route path="/result" element={<Result />} />
                 <Route path="/quizsetlibrary" element={<QuizSetLibrary />} />
                 <Route path="/history" element={<History />} />
+                <Route path="/topic/:id" element={<TopicView />} />
               </Routes>
             </Box>
           </Box>

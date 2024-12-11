@@ -14,7 +14,7 @@ const QuizSetCard = ({ title, questionCount, quizId }) => {
 
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/quiz/${quizId}`);
+    navigate(`/quizsetview/${quizId}`);
   };
   return (
     <Card

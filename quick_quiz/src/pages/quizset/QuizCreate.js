@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -8,17 +8,21 @@ import {
   Grid,
   TextField,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
 function QuizCreate() {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
   const [questions, setQuestions] = useState([]);
 
   // Add a new question
   const addQuestion = () => {
     setQuestions([
       ...questions,
-      { question: '', options: ['Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4'], correctAnswer: '' },
+      {
+        question: "",
+        options: ["Đáp án 1", "Đáp án 2", "Đáp án 3", "Đáp án 4"],
+        correctAnswer: "",
+      },
     ]);
   };
 
@@ -31,35 +35,35 @@ function QuizCreate() {
   // Handle quiz submission
   const handleCreate = async () => {
     try {
-      await axios.post('/api/quizzes', { title, questions });
-      alert('Quiz created successfully!');
-      setTitle('');
+      await axios.post("/api/quizzes", { title, questions });
+      alert("Quiz created successfully!");
+      setTitle("");
       setQuestions([]);
     } catch (error) {
-      alert('Failed to create quiz!');
+      alert("Failed to create quiz!");
     }
   };
 
   return (
     <Box
       sx={{
-        width: '60vw',
-        margin: '0 auto',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
+        width: "60vw",
+        margin: "0 auto",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
       }}
     >
       <Typography variant="h4" sx={{ marginBottom: 2 }}>
-        Tạo Quiz
+        Tạo Bộ câu hỏi
       </Typography>
 
       {/* Quiz Title Input */}
       <Box sx={{ marginBottom: 3 }}>
         <TextField
           type="text"
-          label="Tiêu đề của Quiz"
+          label="Tiêu đề của Bộ câu hỏi"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
@@ -92,7 +96,7 @@ function QuizCreate() {
             <Grid container spacing={2}>
               {q.options.map((option, optIndex) => (
                 <Grid item xs={12} sm={6} key={optIndex}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     <TextField
                       type="text"
                       label={`Lựa chọn số ${optIndex + 1}`}
@@ -100,7 +104,8 @@ function QuizCreate() {
                       multiline
                       onChange={(e) => {
                         const updatedQuestions = [...questions];
-                        updatedQuestions[index].options[optIndex] = e.target.value;
+                        updatedQuestions[index].options[optIndex] =
+                          e.target.value;
                         setQuestions(updatedQuestions);
                       }}
                       fullWidth
@@ -134,13 +139,18 @@ function QuizCreate() {
 
       <Box>
         {/* Add Question Button */}
-        <Button variant="contained" onClick={addQuestion} sx={{ marginRight: 2 }}>
+        <Button variant="contained" onClick={addQuestion} sx={{ m: 2, p: 1 }}>
           Thêm câu hỏi
         </Button>
 
         {/* Submit Quiz Button */}
-        <Button variant="contained" color="primary" onClick={handleCreate}>
-          Tạo quiz
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreate}
+          sx={{ m: 2, p: 1 }}
+        >
+          Tạo bộ câu hỏi
         </Button>
       </Box>
     </Box>

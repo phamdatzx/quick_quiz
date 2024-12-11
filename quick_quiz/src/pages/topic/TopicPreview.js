@@ -1,21 +1,20 @@
 import {
     Box,
-    ButtonBase,
     Card,
     CardActionArea,
     CardContent,
-    Chip,
     Typography,
   } from "@mui/material";
   import React from "react";
   import { useNavigate } from "react-router-dom";
   
-  const QuizSetPreview = ({ title, questionCount, quizId }) => {
-  
+  const TopicPreview = ({ title, description, topicId }) => {
     const navigate = useNavigate();
+  
     const handleClick = () => {
-      navigate(`/quizsetview/${quizId}`);
+      navigate(`/topic/${topicId}`);
     };
+  
     return (
       <Card
         sx={{
@@ -44,18 +43,27 @@ import {
             }}
           >
             <Typography
+              variant="h6"
               sx={{
                 paddingBottom: 1,
+                fontWeight: "bold",
               }}
             >
               {title}
             </Typography>
-            <Chip label={questionCount + " Câu hỏi"} sx={{}}></Chip>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                paddingBottom: 1,
+              }}
+            >
+              {description}
+            </Typography>
           </CardContent>
         </CardActionArea>
       </Card>
     );
   };
   
-  export default QuizSetPreview;
-  
+  export default TopicPreview;

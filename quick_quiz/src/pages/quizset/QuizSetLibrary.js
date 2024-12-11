@@ -11,8 +11,10 @@ import {
   Grid,
   Tabs,
   Tab,
+  IconButton,
 } from "@mui/material";
 import QuizSetPreview from "./QuizSetPreview";
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 const QuizSetLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,10 +56,13 @@ const QuizSetLibrary = () => {
 
   const filterAndSortQuizsets = (quizsets) => {
     return quizsets
-      .filter((quizset) => quizset.title.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter((quizset) =>
+        quizset.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
       .sort((a, b) => {
         if (sortOption === "recent") return b.quizId - a.quizId;
-        if (sortOption === "alphabetical") return a.title.localeCompare(b.title);
+        if (sortOption === "alphabetical")
+          return a.title.localeCompare(b.title);
         return 0;
       });
   };
@@ -70,18 +75,37 @@ const QuizSetLibrary = () => {
   const filteredQuizsets = filterAndSortQuizsets(quizsets);
   const filteredSavedQuizsets = filterAndSortQuizsets(savedQuizsets);
 
-  const currentQuizsets = currentTab === 0 ? filteredQuizsets : filteredSavedQuizsets;
+  const currentQuizsets =
+    currentTab === 0 ? filteredQuizsets : filteredSavedQuizsets;
   const displayedQuizsets = paginatedQuizsets(currentQuizsets);
   const pageCount = Math.ceil(currentQuizsets.length / itemsPerPage);
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Các bộ câu hỏi
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4">
+          Các bộ câu hỏi
+        </Typography>
+        <IconButton href="/create" sx={{}}>
+          <CreateNewFolderIcon />
+          <Typography variant="subtitle1">
+            Tạo bộ câu hỏi
+          </Typography>
+        </IconButton>
+      </Box>
 
       {/* Tabs for Quizsets */}
-      <Tabs value={currentTab} onChange={handleTabChange} sx={{ marginBottom: 3 }}>
+      <Tabs
+        value={currentTab}
+        onChange={handleTabChange}
+        sx={{ marginBottom: 3 }}
+      >
         <Tab label="Bộ câu hỏi của bạn" />
         <Tab label="Bộ câu hỏi đã lưu" />
       </Tabs>

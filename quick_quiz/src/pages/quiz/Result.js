@@ -54,41 +54,42 @@ const Result = () => {
               justifySelf: "center",
             }}
           >
-            <Typography variant="subtitle1">Câu {index + 1}: </Typography>
-            <Typography>{quiz.question}</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Câu {index + 1}: {quiz.question}
+            </Typography>
 
-            <Typography variant="subtitle1">Đáp án của bạn: </Typography>
-            <Box
-              sx={{
-                fontFamily: "Lexend",
-                border: "none",
-                borderRadius: 2,
-                backgroundColor:
-                  userAnswers[index] === quiz.correctAnswer
-                    ? "#6FD181"
-                    : "#A70F0F",
-                color: "#fff",
-                padding: "8px 16px",
-                textAlign: "center",
-              }}
-            >
-              {quiz.choices[userAnswers[index]] || "Chưa trả lời"}
-            </Box>
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}> 
+              {quiz.choices.map((choice, choiceIndex) => {
+                const isCorrect = choiceIndex === quiz.correctAnswer;
+                const isSelected = choiceIndex === userAnswers[index];
 
-            <Typography variant="subtitle1">Đáp án đúng: </Typography>
-            <Box
-              sx={{
-                fontFamily: "Lexend",
-                border: "none",
-                borderRadius: 2,
-                backgroundColor: "#fff",
-                color: "#000",
-                padding: "8px 16px",
-                textAlign: "center",
-                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              {quiz.choices[quiz.correctAnswer]}
+                return (
+                  <Box
+                    key={choiceIndex}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      p: 1,
+                      borderRadius: 2,
+                      backgroundColor: isCorrect
+                        ? "#6FD181"
+                        : isSelected
+                        ? "#A70F0F"
+                        : "#f0f0f0",
+                      
+                      boxShadow: isCorrect || isSelected
+                        ? "0px 4px 6px rgba(0, 0, 0, 0.2)"
+                        : "none",
+                    }}
+                  >
+                    <Typography sx={{
+                      color: isCorrect || isSelected ? "#fff" : "#000",
+                    }}>
+                      {choice}
+                    </Typography>
+                  </Box>
+                );
+              })}
             </Box>
           </Box>
         ))}

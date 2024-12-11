@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Grid, IconButton, Pagination, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, IconButton, Typography } from "@mui/material";
 import QuizSetCard from "../quizset/QuizSetCard"; // Import QuizSetCard
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
@@ -32,28 +32,41 @@ const Home = () => {
 
   const [myPage, setMyPage] = useState(1);
   const [savedPage, setSavedPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(calculateItemsPerPage());
 
-  const itemsPerPage = 3;
+ 
+  function calculateItemsPerPage() {
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 2200) return 5;
+    if (screenWidth >= 1800) return 4;
+    if (screenWidth >= 1400) return 3;
+    if (screenWidth >= 1000) return 2;
+    if (screenWidth >= 600) return 1;
+    return 1;
+  }
 
-  const handleMyPageChange = (direction) => {
-    if (
-      direction === "next" &&
-      myPage < Math.ceil(myQuizSets.length / itemsPerPage)
-    ) {
-      setMyPage(myPage + 1);
-    } else if (direction === "prev" && myPage > 1) {
-      setMyPage(myPage - 1);
-    }
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerPage(calculateItemsPerPage());
+      setMyPage(1); 
+      setSavedPage(1);
+    };
 
-  const handleSavedPageChange = (direction) => {
-    if (
-      direction === "next" &&
-      savedPage < Math.ceil(savedQuizSets.length / itemsPerPage)
-    ) {
-      setSavedPage(savedPage + 1);
-    } else if (direction === "prev" && savedPage > 1) {
-      setSavedPage(savedPage - 1);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const handlePageChange = (direction, type) => {
+    if (type === "my") {
+      const maxPage = Math.ceil(myQuizSets.length / itemsPerPage);
+      if (direction === "next" && myPage < maxPage) setMyPage(myPage + 1);
+      if (direction === "prev" && myPage > 1) setMyPage(myPage - 1);
+    } else {
+      const maxPage = Math.ceil(savedQuizSets.length / itemsPerPage);
+      if (direction === "next" && savedPage < maxPage) setSavedPage(savedPage + 1);
+      if (direction === "prev" && savedPage > 1) setSavedPage(savedPage - 1);
     }
   };
 
@@ -64,79 +77,59 @@ const Home = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      {/* Quizset của bạn */}
-      <Typography variant="h5" sx={{ marginBottom: 2 }}>
-        Quizset của bạn
+      {/* Your Quizsets */}
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        Bộ câu hỏi của bạn
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 2,
-        }}
-      >
-        <IconButton
-          onClick={() => handleMyPageChange("prev")}
-          disabled={myPage === 1}
-        >
+      <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+        <IconButton onClick={() => handlePageChange("prev", "my")} disabled={myPage === 1}>
           <ArrowBack />
         </IconButton>
 
-        <Box
-          sx={{ display: "flex", justifyContent: "stretch", paddingBottom: 2 }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "stretch", gap: 2 }}>
           {getPaginatedQuizSets(myQuizSets, myPage).map((quizSet) => (
             <QuizSetCard
-              key={quizSet.id}
+              key={quizSet.quizId}
               title={quizSet.title}
               questionCount={quizSet.questionCount}
-              quizId={quizSet.id}
+              quizId={quizSet.quizId}
             />
           ))}
         </Box>
 
         <IconButton
-          onClick={() => handleMyPageChange("next")}
+          onClick={() => handlePageChange("next", "my")}
           disabled={myPage === Math.ceil(myQuizSets.length / itemsPerPage)}
         >
           <ArrowForward />
         </IconButton>
       </Box>
 
-      {/* Quizset đã lưu */}
-      <Typography variant="h5" sx={{ marginBottom: 2 }}>
-        Quizset đã lưu
+      {/* Saved Quizsets */}
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        Bộ câu hỏi đã lưu
       </Typography>
 
-      <Box
-        sx={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}
-      >
-        <IconButton
-          onClick={() => handleSavedPageChange("prev")}
-          disabled={savedPage === 1}
-        >
+      <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+        <IconButton onClick={() => handlePageChange("prev", "saved")} disabled={savedPage === 1}>
           <ArrowBack />
         </IconButton>
 
-        <Box
-          sx={{ display: "flex", justifyContent: "stretch", paddingBottom: 2 }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "stretch", gap: 2 }}>
           {getPaginatedQuizSets(savedQuizSets, savedPage).map((quizSet) => (
             <QuizSetCard
-              key={quizSet.id}
+              key={quizSet.quizId}
               title={quizSet.title}
               questionCount={quizSet.questionCount}
-              quizId={quizSet.id}
+              quizId={quizSet.quizId}
             />
           ))}
         </Box>
 
         <IconButton
-          onClick={() => handleSavedPageChange("next")}
-          disabled={
-            savedPage === Math.ceil(savedQuizSets.length / itemsPerPage)
-          }
+          onClick={() => handlePageChange("next", "saved")}
+          disabled={savedPage === Math.ceil(savedQuizSets.length / itemsPerPage)}
         >
           <ArrowForward />
         </IconButton>
@@ -144,4 +137,5 @@ const Home = () => {
     </Box>
   );
 };
+
 export default Home;
