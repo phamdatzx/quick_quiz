@@ -1,14 +1,21 @@
 package com.example.backend.service;
 
+import com.example.backend.DTO.Topic.ListTopicDTO;
 import com.example.backend.DTO.Topic.TopicDTO;
 import com.example.backend.entity.Topic;
 import com.example.backend.exception.ConflictException;
 import com.example.backend.exception.ForbiddenException;
 import com.example.backend.exception.ResourceNotFoundException;
+import com.example.backend.exception.ValidationException;
 import com.example.backend.repository.TopicRepository;
 import com.example.backend.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -72,5 +79,23 @@ public class TopicService {
 
   private boolean isTopicExistsByNameAndCreatorEmail(String name, String email){
     return topicRepository.findByNameAndCreatorEmail(name,email).isPresent();
+  }
+
+  public ResponseEntity<ListTopicDTO> getAllTopics(String email, int page, int limit)
+  {
+    if(page < 1){
+      throw new ValidationException("Page number must be greater than 0");
+    }
+    Pageable pageable = PageRequest.of(page - 1, limit);
+    Page<Topic> topicPage = topicRepository.findAllByCreatorEmail(email, pageable);
+
+    List<TopicDTO> topicDTOs = topicPage.getContent().stream()
+        .map(topic -> modelMapper.map(topic, TopicDTO.class))
+        .collect(Collectors.toList());
+
+    ListTopicDTO listTopicDTO = new ListTopicDTO();
+    listTopicDTO.setTopics(topicDTOs);
+
+    return ResponseEntity.ok(listTopicDTO);
   }
 }
