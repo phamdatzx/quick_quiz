@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import QuizCreate from "./QuizCreate";
+import QuizCreate from "../../pages/quiz/QuizCreate";
 
 describe("QuizCreate Component", () => {
     it("renders the quiz creation form", () => {
