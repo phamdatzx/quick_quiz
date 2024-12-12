@@ -11,10 +11,17 @@ import com.example.backend.exception.ForbiddenException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.QuizSetRepository;
 import com.example.backend.repository.UserRepository;
+import jakarta.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +37,25 @@ public class QuizSetService {
 
   private ModelMapper modelMapper;
 
-  public ListQuizSetDTO getAllQuizSetsByUserEmail(String email) {
-    List<QuizSet> allQuizSets = quizSetRepository.findAllByCreatorEmail(email);
-    List<QuizSetResponseDTO> allQuizSetsResponseDTO = allQuizSets.stream()
+  public ListQuizSetDTO getAllQuizSetsByUserEmail(String email, String sortElement, String direction, String search, int page, int limit) {
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortElement != null ? sortElement : "name");
+    Pageable pageable = PageRequest.of(page, limit, sort);
+
+    Specification<QuizSet> spec = (root, query, criteriaBuilder) -> {
+      Predicate predicate = criteriaBuilder.equal(root.get("creator").get("email"), email);
+      if (search != null && !search.isEmpty()) {
+        predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("name"), "%" + search + "%"));
+      }
+      return predicate;
+    };
+
+    Page<QuizSet> quizSetPage = quizSetRepository.findAll(spec, pageable);
+
+    List<QuizSetResponseDTO> quizSetDTOs = quizSetPage.getContent().stream()
         .map(quizSet -> modelMapper.map(quizSet, QuizSetResponseDTO.class))
-        .toList();
-    return ListQuizSetDTO.builder().quizSets(allQuizSetsResponseDTO).build();
+        .collect(Collectors.toList());
+
+    return ListQuizSetDTO.builder().quizSets(quizSetDTOs).build();
   }
 
   public ResponseEntity<QuizSetResponseDTO> getQuizSetById(int id) {
