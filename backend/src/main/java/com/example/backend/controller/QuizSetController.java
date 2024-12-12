@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,8 +26,13 @@ public class QuizSetController {
   private final QuizSetService quizSetService;
 
   @GetMapping("/all")
-  public ListQuizSetDTO getAllQuizSets(Principal principal) {
-    return quizSetService.getAllQuizSetsByUserEmail(principal.getName());
+  public ListQuizSetDTO getAllQuizSets(Principal principal,
+      @RequestParam(required = false) String sortElement,
+      @RequestParam(required = false) String direction,
+      @RequestParam(required = false) String search,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int limit) {
+    return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit);
   }
 
   @GetMapping("/{id}")
