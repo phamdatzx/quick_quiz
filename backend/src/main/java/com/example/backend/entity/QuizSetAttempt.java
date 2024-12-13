@@ -3,6 +3,7 @@ package com.example.backend.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuizSetAttempt {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private int id;
 
   @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -34,9 +35,9 @@ public class QuizSetAttempt {
   @JoinColumn(name="user_id")
   private User user;
 
-  private int numberOfCorrectAnswers;
+  private Integer numberOfCorrectAnswers;
 
-  private int attempt;
+  private Integer attempt;
 
   private Date practiceTime;
 
