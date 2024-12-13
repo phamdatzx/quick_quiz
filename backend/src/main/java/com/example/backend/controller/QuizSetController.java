@@ -4,6 +4,7 @@ import com.example.backend.DTO.Quiz.QuizDTO;
 import com.example.backend.DTO.QuizSet.ListQuizSetDTO;
 import com.example.backend.DTO.QuizSet.QuizSetRequestDTO;
 import com.example.backend.DTO.QuizSet.QuizSetResponseDTO;
+import com.example.backend.service.QuizService;
 import com.example.backend.service.QuizSetService;
 import java.security.Principal;
 import java.util.List;
@@ -25,14 +26,27 @@ public class QuizSetController {
 
   private final QuizSetService quizSetService;
 
+  private final QuizService quizService;
+
+//  @GetMapping("/all")
+//  public ListQuizSetDTO getAllQuizSets(Principal principal,
+//      @RequestParam(required = false) String sortElement,
+//      @RequestParam(required = false) String direction,
+//      @RequestParam(required = false) String search,
+//      @RequestParam(defaultValue = "0") int page,
+//      @RequestParam(defaultValue = "10") int limit) {
+//    return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit);
+//  }
+
   @GetMapping("/all")
   public ListQuizSetDTO getAllQuizSets(Principal principal,
       @RequestParam(required = false) String sortElement,
       @RequestParam(required = false) String direction,
       @RequestParam(required = false) String search,
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int limit) {
-    return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit);
+      @RequestParam(defaultValue = "10") int limit,
+      @RequestParam(defaultValue = "0") int topicId) {
+    return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit, topicId);
   }
 
   @GetMapping("/{id}")
@@ -46,12 +60,22 @@ public class QuizSetController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteQuizSet(Principal principal, @RequestBody int id) {
+  public ResponseEntity<String> deleteQuizSet(Principal principal, @PathVariable int id) {
       return quizSetService.deleteQuizSet(principal.getName(), id);
   }
 
   @PostMapping("/{id}")
   public ResponseEntity<QuizDTO> addQuizToQuizSet(Principal principal,@PathVariable int id,@RequestBody QuizDTO quizDTO) {
       return quizSetService.addQuizToQuizSet(principal.getName(),id, quizDTO);
+  }
+
+  @PostMapping("/{id}/quizzes")
+  public ResponseEntity<QuizSetResponseDTO> addMultipleQuizToQuizSet(Principal principal,@PathVariable int id,@RequestBody List<QuizDTO> quizDTOs) {
+      return quizSetService.addMultipleQuizToQuizSet(principal.getName(),id, quizDTOs);
+  }
+
+  @GetMapping("/{id}/quizzes")
+  public ResponseEntity<List<QuizDTO>> getQuizzesByQuizSetId(@PathVariable int id) {
+      return quizService.getQuizzesByQuizSetId(id);
   }
 }
