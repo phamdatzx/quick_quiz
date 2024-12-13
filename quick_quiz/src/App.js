@@ -14,6 +14,7 @@ import QuizSetLibrary from "./pages/quizset/QuizSetLibrary";
 import History from "./pages/history/History";
 import TopicView from "./pages/topic/TopicView";
 import QuizSetView from "./pages/quizset/QuizSetView";
+import TopicCreate from "./pages/topic/TopicCreate";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -48,10 +49,11 @@ function App() {
                 <Route path="/ResetPassword" element={<ResetPassword />} />
                 <Route path="/test" element={<Test />} />
                 <Route path="/quiz/:id" element={<Quiz />} />
-                <Route path="/create" element={<QuizCreate />} />
+                <Route path="/createquizset" element={<QuizCreate />} />
                 <Route path="/quizsetview/:id" element={<QuizSetView/>} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/topic" element={<Topic/>} />
+                <Route path="/topic" element={<Topic />} />
+                <Route path="/createtopic" element={<TopicCreate />} />
                 <Route path="/result" element={<Result />} />
                 <Route path="/quizsetlibrary" element={<QuizSetLibrary />} />
                 <Route path="/history" element={<History />} />

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from 'react';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../../config/customizations/uicustomization.js";
+import { userLogin } from '../../stores/authSlice.js';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -31,82 +32,51 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInCard = () => {
-  //     const [emailError, setEmailError] = React.useState(false);
-  //   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  //   const [passwordError, setPasswordError] = React.useState(false);
-  //   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  //   const [open, setOpen] = React.useState(false);
-  //   const [email, setEmail] = React.useState('');
-  //   const [password, setPassword] = React.useState('');
-  //   const dispatch = useDispatch();
-  //   const navigate = useNavigate();
-  //   const { loading } = useSelector((state) => state.auth);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-  //   const signInWithGoogle = () => {
-  //     window.open(`${API_BASE_URL}/auth/google`, '_self');
-  //   };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
 
-  //   const handleSignIn = (e) => {
-  //     e.preventDefault();
-  //     if (!validateInputs()) return;
+  // Validate input fields
+  const validateInputs = () => {
+    let isValid = true;
 
-  //     dispatch(userLogin({ email, password }))
-  //       .unwrap()
-  //       .then((response) => {
-  //         if (response) {
-  //           toast.success('Đăng nhập thành công');
-  //           navigate('/');
-  //         }
-  //       })
-  //       .catch((status) => {
-  //         if (status === 401) {
-  //           toast.error('Sai tài khoản hoặc mật khẩu');
-  //         } else {
-  //           toast.error('Đã xảy ra lỗi. Vui lòng thử lại.');
-  //         }
-  //       });
-  //   };
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Vui lòng nhập địa chỉ email hợp lệ.');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
 
-  //   const handleClickOpen = () => {
-  //     setOpen(true);
-  //   };
+    if (!password || password.length < 6) {
+      setPasswordError('Mật khẩu phải có ít nhất 6 ký tự.');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
 
-  //   const handleClose = () => {
-  //     setOpen(false);
-  //   };
+    return isValid;
+  };
 
-  //   const handleSubmit = (event) => {
-  //     event.preventDefault();
-  //     const data = new FormData(event.currentTarget);
-  //     console.log({
-  //       email: data.get('email'),
-  //       password: data.get('password'),
-  //     });
-  //   };
+  const handleSignIn = async (e) => {
+    e.preventDefault();
 
-  //   const validateInputs = () => {
-  //     let isValid = true;
+    if (!validateInputs()) return;
 
-  //     if (!email || !/\S+@\S+\.\S+/.test(email)) {
-  //       setEmailError(true);
-  //       setEmailErrorMessage('Vui lòng điền đúng địa chỉ email.');
-  //       isValid = false;
-  //     } else {
-  //       setEmailError(false);
-  //       setEmailErrorMessage('');
-  //     }
-
-  //     if (!password || password.length < 6) {
-  //       setPasswordError(true);
-  //       setPasswordErrorMessage('Mật khẩu phải chứa ít nhất 6 ký tự.');
-  //       isValid = false;
-  //     } else {
-  //       setPasswordError(false);
-  //       setPasswordErrorMessage('');
-  //     }
-
-  //     return isValid;
-  //   };
+    try {
+      const resultAction = await dispatch(userLogin({ email, password }));
+      if (userLogin.fulfilled.match(resultAction)) {
+        toast.success('Đăng nhập thành công!');
+        navigate('/home'); 
+      }
+    } catch {
+      toast.error(error || 'Đăng nhập thất bại!');
+    }
+  };
 
   return (
     <Card variant="basic" sx={{ boxShadow: "none", display:"flex" }}>
@@ -124,10 +94,10 @@ const SignInCard = () => {
           justifyContent: "center",
           display: "flex",
         }}
-        /* disabled={loading} */
+        disabled={loading}
       >
         Đăng nhập
-        {/* {loading && '...'} */}
+        {loading && '...'}
       </Typography>
       <Box
         component="form"
@@ -246,7 +216,7 @@ const SignInCard = () => {
         <Button
           type="submit"
           fullWidth
-          variant="outlined" /* onClick={() => signInWithGoogle()} startIcon={<GoogleIcon />} */
+          variant="outlined" 
           sx={
             {
              height:  "54px",

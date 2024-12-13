@@ -18,7 +18,7 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 const QuizSetLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("recent");
+  const [sortOption, setSortOption] = useState("creationDateAscending");
   const [page, setPage] = useState(1);
   const [currentTab, setCurrentTab] = useState(0);
 
@@ -55,16 +55,9 @@ const QuizSetLibrary = () => {
   };
 
   const filterAndSortQuizsets = (quizsets) => {
+
+    // Condition checking for variable and API call
     return quizsets
-      .filter((quizset) =>
-        quizset.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .sort((a, b) => {
-        if (sortOption === "recent") return b.quizId - a.quizId;
-        if (sortOption === "alphabetical")
-          return a.title.localeCompare(b.title);
-        return 0;
-      });
   };
 
   const paginatedQuizsets = (quizsets) => {
@@ -87,12 +80,13 @@ const QuizSetLibrary = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginBottom: 3,
         }}
       >
         <Typography variant="h4">
           Các bộ câu hỏi
         </Typography>
-        <IconButton href="/create" sx={{}}>
+        <IconButton href="/createquizset" sx={{}}>
           <CreateNewFolderIcon />
           <Typography variant="subtitle1">
             Tạo bộ câu hỏi
@@ -124,13 +118,15 @@ const QuizSetLibrary = () => {
           variant="outlined"
           value={searchTerm}
           onChange={handleSearchChange}
-          sx={{ width: "70%" }}
+          sx={{ width: "60%" }}
         />
-        <FormControl sx={{ width: "25%" }}>
+        <FormControl sx={{ width: "35%" }}>
           <InputLabel>Sắp xếp theo</InputLabel>
           <Select value={sortOption} onChange={handleSortChange}>
-            <MenuItem value="recent">Gần đây</MenuItem>
-            <MenuItem value="alphabetical">Thứ tự chữ cái</MenuItem>
+            <MenuItem value="creationDateAscending">Ngày tạo (Tăng dần)</MenuItem>
+            <MenuItem value="creationDateDescending">Ngày tạo (Giảm dần)</MenuItem>
+            <MenuItem value="nameAscending">Tên (Tăng dần)</MenuItem>
+            <MenuItem value="nameDescending">Tên (Giảm dần)</MenuItem>
           </Select>
         </FormControl>
       </Box>

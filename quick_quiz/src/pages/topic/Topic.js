@@ -9,8 +9,10 @@ import {
   InputLabel,
   Pagination,
   Grid,
+  IconButton,
 } from "@mui/material";
 import TopicPreview from "./TopicPreview";
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 const Topic = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,9 +61,24 @@ const Topic = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Chủ đề
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 3,
+        }}
+      >
+        <Typography variant="h4">
+          Các bộ câu hỏi
+        </Typography>
+        <IconButton href="/createtopic" sx={{}}>
+          <CreateNewFolderIcon />
+          <Typography variant="subtitle1">
+            Tạo bộ câu hỏi
+          </Typography>
+        </IconButton>
+      </Box>
 
       {/* Search and Sort Controls */}
       <Box
@@ -77,15 +94,8 @@ const Topic = () => {
           variant="outlined"
           value={searchTerm}
           onChange={handleSearchChange}
-          sx={{ width: "70%" }}
+          sx={{ width: "100%" }}
         />
-        <FormControl sx={{ width: "25%" }}>
-          <InputLabel>Sắp xếp theo</InputLabel>
-          <Select value={sortOption} onChange={handleSortChange}>
-            <MenuItem value="recent">Gần đây</MenuItem>
-            <MenuItem value="alphabetical">Thứ tự chữ cái</MenuItem>
-          </Select>
-        </FormControl>
       </Box>
 
       <Grid container spacing={2}>
