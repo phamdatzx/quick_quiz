@@ -38,6 +38,10 @@ public class QuizSetService {
   private ModelMapper modelMapper;
 
   public ListQuizSetDTO getAllQuizSetsByUserEmail(String email, String sortElement, String direction, String search, int page, int limit) {
+    if(direction == null) {
+      direction = "asc";
+    }
+
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortElement != null ? sortElement : "name");
     Pageable pageable = PageRequest.of(page, limit, sort);
 
