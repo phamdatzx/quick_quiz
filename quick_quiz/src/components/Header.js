@@ -49,11 +49,11 @@ export default function Header() {
       <Box
         sx={{
           display: "flex",
-                  justifyContent: "space-between",
+                  justifyContent: "right",
           m:2,
         }}
       >
-        <TextField
+        {/* <TextField
           placeholder="Tìm kiếm"
           sx={{
             justifyContent: "center",
@@ -61,7 +61,7 @@ export default function Header() {
               width:'90%',
             minWidth:'10%',
           }}
-        ></TextField>
+        ></TextField> */}
         <IconButton
           onClick={handleClick}
           sx={{

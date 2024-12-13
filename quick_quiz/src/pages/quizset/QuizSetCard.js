@@ -14,13 +14,14 @@ const QuizSetCard = ({ title, questionCount, quizId }) => {
 
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/quiz/${quizId}`);
+    navigate(`/quizsetview/${quizId}`);
   };
   return (
     <Card
       sx={{
-        height: 150,
-        width: 350,
+        minHeight: 150,
+        minWidth: 350,
+        width:'100%',
         ":hover": {
           transform: "scale(1.02)",
         },
