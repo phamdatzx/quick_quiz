@@ -32,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = jakarta.persistence.GenerationType.SEQUENCE)
   private int id;
 
   @Column(unique = true)

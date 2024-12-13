@@ -4,11 +4,13 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.SequenceGenerator;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -25,7 +27,8 @@ import lombok.NoArgsConstructor;
 public class QuizSet {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @SequenceGenerator(name = "quiz_set", sequenceName = "quiz_set_seq", allocationSize = 1)
   private int id;
 
   private String name;
@@ -34,7 +37,9 @@ public class QuizSet {
 
   private Date createdTime;
 
-  private int totalQuestions;
+  private Integer totalQuestions;
+
+  private Boolean showAnswer;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "creator_id")
