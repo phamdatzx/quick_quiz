@@ -38,6 +38,17 @@ public class QuizSetController {
     return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit, topicId);
   }
 
+  @GetMapping("/bookmarks")
+  public ListQuizSetDTO getAllBookmarkQuizSets(Principal principal,
+      @RequestParam(required = false) String sortElement,
+      @RequestParam(required = false) String direction,
+      @RequestParam(required = false) String search,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int limit,
+      @RequestParam(defaultValue = "0") int topicId) {
+    return quizSetService.getAllBookmarkQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit, topicId);
+  }
+
   @GetMapping("/{id}")
   public ResponseEntity<QuizSetResponseDTO> getQuizSetById(@PathVariable int id) {
       return quizSetService.getQuizSetById(id);
@@ -72,4 +83,15 @@ public class QuizSetController {
   public ResponseEntity<QuizSetResponseDTO> disable(Principal principal, @PathVariable int id) {
     return quizSetService.disableShowAnswer(principal.getName(), id);
   }
+
+  @PostMapping("/{id}/bookmark")
+  public ResponseEntity<String> addToBookmark(Principal principal, @PathVariable int id) {
+    return quizSetService.addToBookmark(principal.getName(), id);
+  }
+
+  @DeleteMapping("/{id}/bookmark")
+  public ResponseEntity<String> removeFromBookmark(Principal principal, @PathVariable int id) {
+    return quizSetService.removeFromBookmark(principal.getName(), id);
+  }
+
 }
