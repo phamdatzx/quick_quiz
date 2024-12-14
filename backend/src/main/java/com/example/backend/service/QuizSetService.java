@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -221,5 +220,69 @@ public class QuizSetService {
 
     var resultDTO = modelMapper.map(quizSet.get(), QuizSetResponseDTO.class);
     return ResponseEntity.status(200).body(resultDTO);
+  }
+
+  public ResponseEntity<String> addToBookmark(String email, int id) {
+    var quizSet = quizSetRepository.findById(id);
+    if (quizSet.isEmpty()) {
+      throw new ResourceNotFoundException("Quiz set not found");
+    }
+
+    var user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    user.getBookmarks().add(quizSet.get());
+    userRepository.save(user);
+
+    return ResponseEntity.status(200).body("Quiz set added to bookmarks successfully");
+  }
+
+  public ResponseEntity<String> removeFromBookmark(String email, int id) {
+    var quizSet = quizSetRepository.findById(id);
+    if (quizSet.isEmpty()) {
+      throw new ResourceNotFoundException("Quiz set not found");
+    }
+
+    var user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    if (!user.getBookmarks().remove(quizSet.get())) {
+      throw new ResourceNotFoundException("Quiz set not found in bookmarks");
+    }
+
+    userRepository.save(user);
+
+    return ResponseEntity.status(200).body("Quiz set removed from bookmarks successfully");
+  }
+
+  public ListQuizSetDTO getAllBookmarkQuizSetsByUserEmail(String email, String sortElement, String direction, String search, int page,
+      int limit, int topicId) {
+    if (direction == null) {
+      direction = "asc";
+    }
+
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortElement != null ? sortElement : "name");
+    Pageable pageable = PageRequest.of(page, limit, sort);
+
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    Specification<QuizSet> spec = (root, query, criteriaBuilder) -> {
+      Predicate predicate = root.in(user.getBookmarks());
+      if (search != null && !search.isEmpty()) {
+        predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("name"), "%" + search + "%"));
+      }
+      if (topicId != 0) {
+        predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("topic").get("id"), topicId));
+      }
+      return predicate;
+    };
+
+    Page<QuizSet> quizSetPage = quizSetRepository.findAll(spec, pageable);
+
+    List<QuizSetResponseDTO> quizSetDTOs = quizSetPage.getContent().stream()
+        .map(quizSet -> modelMapper.map(quizSet, QuizSetResponseDTO.class))
+        .collect(Collectors.toList());
+
+    return ListQuizSetDTO.builder().quizSets(quizSetDTOs).build();
+
+
   }
 }
