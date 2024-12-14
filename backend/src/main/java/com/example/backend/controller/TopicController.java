@@ -1,11 +1,15 @@
 package com.example.backend.controller;
 
+import com.example.backend.DTO.Topic.ListTopicDTO;
 import com.example.backend.DTO.Topic.TopicDTO;
 import com.example.backend.service.TopicService;
 import java.security.Principal;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000/")
 public class TopicController {
 
   private final TopicService topicService;
@@ -33,5 +38,12 @@ public class TopicController {
   @PatchMapping("/topic/{id}")
   public ResponseEntity<TopicDTO> updateTopic(Principal principal,@PathVariable int id,@RequestBody TopicDTO topicDTO) {
     return topicService.updateTopic(principal.getName(),id,topicDTO);
+  }
+
+  @GetMapping("/topics")
+  public ResponseEntity<ListTopicDTO> getAllTopics(Principal principal,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int limit) {
+    return topicService.getAllTopics(principal.getName(), page, limit);
   }
 }

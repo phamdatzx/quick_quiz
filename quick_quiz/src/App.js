@@ -8,8 +8,13 @@ import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import theme from "./config/customizations/uicustomization";
 import Home from "./pages/home/Home";
-import QuizCreate from "./pages/quiz/QuizCreate";
-import Library from "./pages/library/Library";
+import QuizCreate from "./pages/quizset/QuizCreate";
+import Topic from "./pages/topic/Topic";
+import QuizSetLibrary from "./pages/quizset/QuizSetLibrary";
+import History from "./pages/history/History";
+import TopicView from "./pages/topic/TopicView";
+import QuizSetView from "./pages/quizset/QuizSetView";
+import TopicCreate from "./pages/topic/TopicCreate";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -20,7 +25,7 @@ const ForgotPassword = lazy(() => import("./pages/forgotpassword/ForgotPassword"
 const ResetPassword = lazy(() => import("./pages/resetpassword/ResetPassword")) 
 const Quiz = lazy(() => import("./pages/quiz/Quiz"));
 const Result = lazy(() => import("./pages/quiz/Result"));
-const Test = lazy(() => import("./pages/home/QuizSetCard"));
+const Test = lazy(() => import("./pages/quizset/QuizSetCard"));
 
 function App() {
   let isAuthenticated = true;
@@ -44,10 +49,15 @@ function App() {
                 <Route path="/ResetPassword" element={<ResetPassword />} />
                 <Route path="/test" element={<Test />} />
                 <Route path="/quiz/:id" element={<Quiz />} />
-                <Route path="/create" element={<QuizCreate />} />
+                <Route path="/createquizset" element={<QuizCreate />} />
+                <Route path="/quizsetview/:id" element={<QuizSetView/>} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/library" element={<Library/>} />
+                <Route path="/topic" element={<Topic />} />
+                <Route path="/createtopic" element={<TopicCreate />} />
                 <Route path="/result" element={<Result />} />
+                <Route path="/quizsetlibrary" element={<QuizSetLibrary />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/topic/:id" element={<TopicView />} />
               </Routes>
             </Box>
           </Box>

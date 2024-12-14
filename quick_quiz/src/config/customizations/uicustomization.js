@@ -5,6 +5,12 @@ import { colors } from '@mui/material';
 
 const theme = createTheme({
   components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true,
+      },
+    },
+
     MuiButton: {
       defaultProps: {
         disableRipple: true,
@@ -174,16 +180,60 @@ const theme = createTheme({
           fontFamily: 'Lexend',
           padding: '10px 20px',
           '&:hover': {
-            backgroundColor: '#1935CA30',
+            backgroundColor: '#1935CA',
             borderRadius: 10,
+            color: '#FFFFFF',
           },
           '&.Mui-selected': {
-            backgroundColor: '#1935CA30',
-            color: '#006064',
+            backgroundColor: '#1935CA',
+            borderRadius: 10,
+            color: '#FFFFFF',
             '&:hover': {
-              backgroundColor: '#1935CA30',
+              backgroundColor: '#1935CA',
+              color: '#FFFFFF',
             },
           },
+        },
+      },
+    },
+
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          border: "none",
+          backgroundColor: '#FFFFFF', 
+          fontFamily: 'Lexend',
+          borderRadius: '10px', 
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+          
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          "&:hover": {
+            boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.2)",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            border: "none",
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            border: "none", 
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            border: "none", 
+          },
+        },
+      },
+    },
+
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          fontFamily: "'Lexend', sans-serif", 
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          fontFamily: "'Lexend', sans-serif", 
         },
       },
     },
