@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface QuizSetRepository extends JpaRepository<QuizSet, Integer> {
   Optional<QuizSet> findByName(String name);
   Optional<QuizSet> findById(int id);
-  List<QuizSet> findAllByCreatorEmail(String email);
+  List<QuizSet> findAllByNameAndCreatorEmail(String name,String email);
   Page<QuizSet> findAll(Specification<QuizSet> spec, Pageable pageable);
 }
