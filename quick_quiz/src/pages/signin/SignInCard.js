@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../../config/customizations/uicustomization.js";
 import { userLogin } from '../../stores/authSlice.js';
+import loginSuccess from '../../stores/authSlice.js';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -64,17 +65,19 @@ const SignInCard = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-
+  
     if (!validateInputs()) return;
-
+  
     try {
       const resultAction = await dispatch(userLogin({ email, password }));
       if (userLogin.fulfilled.match(resultAction)) {
         toast.success('Đăng nhập thành công!');
         navigate('/home'); 
+      } else if (userLogin.rejected.match(resultAction)) {
+        toast.error(resultAction.payload || 'Đăng nhập thất bại!');
       }
-    } catch {
-      toast.error(error || 'Đăng nhập thất bại!');
+    } catch (err) {
+      toast.error('Đã xảy ra lỗi không mong muốn!');
     }
   };
 
@@ -101,7 +104,7 @@ const SignInCard = () => {
       </Typography>
       <Box
         component="form"
-        /* onSubmit={handleSubmit} */
+        onSubmit={handleSignIn}
         noValidate
         sx={{
           display: "flex",
@@ -113,9 +116,8 @@ const SignInCard = () => {
         <FormControl>
           <FormLabel htmlFor="email">Email</FormLabel>
           <TextField
-          /* error={emailError}
-                helperText={emailErrorMessage} */
-
+          error={!!emailError}
+          helperText={emailError}
           id="email"
           type="email"
           name="email"
@@ -123,14 +125,14 @@ const SignInCard = () => {
           autoComplete="email"
           autoFocus
           required
-          // fullWidth
-          // variant="outlined"
-          // color={/* emailError ? 'error' : */ "primary"}
+          fullWidth
+          variant="outlined"
+          color={emailError ? '#A70F0F' : "#6FD181"}
           sx={{
             ariaLabel: "email",
             
           }}
-          /* onChange={(e) => setEmail(e.target.value)} */
+          onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
         <FormControl>
@@ -143,8 +145,8 @@ const SignInCard = () => {
             <FormLabel htmlFor="password">Mật khẩu</FormLabel>
           </Box>
           <TextField
-            /* error={passwordError}
-                helperText={passwordErrorMessage} */
+            error={!!passwordError}
+            helperText={passwordError}
             name="password"
             placeholder="••••••"
             type="password"
@@ -154,8 +156,8 @@ const SignInCard = () => {
             required
             fullWidth
             variant="outlined"
-            color={/* passwordError ? 'error' :  */ "primary"}
-            /* onChange={(e) => setPassword(e.target.value)} */
+            color={passwordError ? '#A70F0F' : "#6FD181"}
+            onChange={(e) => setPassword(e.target.value)}
             sx={{
               ariaLabel: "password",
               mb: 2,
@@ -190,14 +192,14 @@ const SignInCard = () => {
           type="submit"
           fullWidth
           variant="contained"
-          /* onClick={handleSignIn} 
-              disabled={loading}  */
+          onClick={handleSignIn} 
+            disabled={loading} 
           sx={{
             height: "54px",
             my: 2,
           }}
         >
-          {/* loading ? 'Đang đăng nhập...' :  */ "Đăng nhập"}
+          {loading ? 'Đang đăng nhập...' : "Đăng nhập"}
         </Button>
 
         <Typography sx={{ textAlign: "center" }}>

@@ -8,7 +8,7 @@ const axiosConfig = axios.create({
 });
 
 axiosConfig.interceptors.request.use((config) => {
-    const token = /* localStorage.getItem('token') */"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUBnbWFpbC5jb20iLCJpYXQiOjE3MzQwNjI0NTEsImV4cCI6MTczNDE0ODg1MX0.YcWkX0rHqxgM6QjLMTapm1_LN2hbf68oJ8ITCuLE_QE"; 
+    const token = localStorage.getItem('token'); 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
   }
