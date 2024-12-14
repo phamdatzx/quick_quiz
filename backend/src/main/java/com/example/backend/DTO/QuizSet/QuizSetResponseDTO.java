@@ -15,6 +15,8 @@ public class QuizSetResponseDTO {
 
   private String description;
 
+  private Boolean allowShowAnswer;
+
   private Date createdTime;
 
   private List<QuizDTO> quizzes;

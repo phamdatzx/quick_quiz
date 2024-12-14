@@ -188,4 +188,38 @@ public class QuizSetService {
     var resultDTO = modelMapper.map(updatedQuizSet, QuizSetResponseDTO.class);
     return ResponseEntity.status(200).body(resultDTO);
   }
+
+  public ResponseEntity<QuizSetResponseDTO> allowShowAnswer(String email, int id) {
+    var quizSet = quizSetRepository.findById(id);
+    if (quizSet.isEmpty()) {
+      throw new ResourceNotFoundException("Quiz set not found");
+    }
+
+    if (!quizSet.get().getCreator().getEmail().equals(email)) {
+      throw new ForbiddenException("You are not authorized to add quizzes to this quiz set");
+    }
+
+    quizSet.get().setAllowShowAnswer(true);
+    quizSetRepository.save(quizSet.get());
+
+    var resultDTO = modelMapper.map(quizSet.get(), QuizSetResponseDTO.class);
+    return ResponseEntity.status(200).body(resultDTO);
+  }
+
+  public ResponseEntity<QuizSetResponseDTO> disableShowAnswer(String email, int id) {
+    var quizSet = quizSetRepository.findById(id);
+    if (quizSet.isEmpty()) {
+      throw new ResourceNotFoundException("Quiz set not found");
+    }
+
+    if (!quizSet.get().getCreator().getEmail().equals(email)) {
+      throw new ForbiddenException("You are not authorized to add quizzes to this quiz set");
+    }
+
+    quizSet.get().setAllowShowAnswer(false);
+    quizSetRepository.save(quizSet.get());
+
+    var resultDTO = modelMapper.map(quizSet.get(), QuizSetResponseDTO.class);
+    return ResponseEntity.status(200).body(resultDTO);
+  }
 }

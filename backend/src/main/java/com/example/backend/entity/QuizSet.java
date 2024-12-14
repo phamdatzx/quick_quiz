@@ -39,7 +39,7 @@ public class QuizSet {
 
   private Integer totalQuestions;
 
-  private Boolean showAnswer;
+  private Boolean allowShowAnswer=true;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "creator_id")
