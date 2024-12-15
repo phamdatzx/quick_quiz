@@ -71,12 +71,15 @@ public class QuizSetService {
     Pageable pageable = PageRequest.of(page, limit, sort);
 
     Specification<QuizSet> spec = (root, query, criteriaBuilder) -> {
-      Predicate predicate = criteriaBuilder.equal(root.get("creator").get("email"), email);
+      Predicate predicate = criteriaBuilder.conjunction(); // Initialize predicate
+
+      if (email != null) {
+        predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("creator").get("email"), email));
+      }
       if (search != null && !search.isEmpty()) {
         predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("name"), "%" + search + "%"));
       }
-      if(topicId != 0)
-      {
+      if (topicId != 0) {
         predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("topic").get("id"), topicId));
       }
       return predicate;
@@ -290,5 +293,19 @@ public class QuizSetService {
     return ListQuizSetDTO.builder().quizSets(quizSetDTOs).build();
 
 
+  }
+
+  public ListQuizSetDTO getRandomQuizSet(int limit) {
+    long totalQuizSets = quizSetRepository.count();
+    int randomPage = (int) (Math.random() * (totalQuizSets / limit));
+
+    Pageable pageable = PageRequest.of(randomPage, limit);
+    Page<QuizSet> quizSetPage = quizSetRepository.findAll(pageable);
+
+    List<QuizSetResponseDTO> quizSetDTOs = quizSetPage.getContent().stream()
+        .map(quizSet -> modelMapper.map(quizSet, QuizSetResponseDTO.class))
+        .collect(Collectors.toList());
+
+    return ListQuizSetDTO.builder().quizSets(quizSetDTOs).build();
   }
 }

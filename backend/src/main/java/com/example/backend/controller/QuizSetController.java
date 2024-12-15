@@ -38,6 +38,22 @@ public class QuizSetController {
     return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit, topicId);
   }
 
+  @GetMapping("/all-of-all-user")
+  public ListQuizSetDTO getAllQuizSetsOfAllUser(
+      @RequestParam(required = false) String sortElement,
+      @RequestParam(required = false) String direction,
+      @RequestParam(required = false) String search,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int limit,
+      @RequestParam(defaultValue = "0") int topicId) {
+    return quizSetService.getAllQuizSetsByUserEmail(null, sortElement,direction, search, page, limit, topicId);
+  }
+
+  @GetMapping("/random")
+  public ListQuizSetDTO getRandomQuizSet(@RequestParam(defaultValue = "10") int limit) {
+    return quizSetService.getRandomQuizSet(limit);
+  }
+
   @GetMapping("/bookmarks")
   public ListQuizSetDTO getAllBookmarkQuizSets(Principal principal,
       @RequestParam(required = false) String sortElement,
