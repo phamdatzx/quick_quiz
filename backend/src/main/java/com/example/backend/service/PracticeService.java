@@ -1,6 +1,9 @@
 package com.example.backend.service;
 
 import com.example.backend.DTO.Practice.PracticeQuizDTO;
+import com.example.backend.DTO.Practice.PracticeQuizResponseDTO;
+import com.example.backend.DTO.Practice.PracticeResponseDTO;
+import com.example.backend.DTO.QuizSet.QuizSetResponseDTO;
 import com.example.backend.entity.AttemptDetail;
 import com.example.backend.entity.QuizSet;
 import com.example.backend.entity.QuizSetAttempt;
@@ -76,5 +79,39 @@ public class PracticeService {
 
   public int getMaxAttempt(int userId, int quizSetId) {
     return quizSetAttemptRepository.findMaxAttemptByUserIdAndQuizSetId(userId, quizSetId);
+  }
+
+  public ResponseEntity<List<PracticeResponseDTO>> getPractices(String name) {
+    User user = userRepository.findByEmail(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    List<QuizSetAttempt> quizSetAttempts = quizSetAttemptRepository.findAllByUserId(user.getId());
+
+    List<PracticeResponseDTO> practiceResponseDTOs = quizSetAttempts.stream().map(quizSetAttempt -> {
+      PracticeResponseDTO practiceResponseDTO = new PracticeResponseDTO();
+      practiceResponseDTO.setId(quizSetAttempt.getId());
+      practiceResponseDTO.setQuizSet(new QuizSetResponseDTO(quizSetAttempt.getQuizSet().getId(), quizSetAttempt.getQuizSet().getName()));
+      practiceResponseDTO.setUserId(quizSetAttempt.getUser().getId());
+      practiceResponseDTO.setNumberOfCorrectAnswers(quizSetAttempt.getNumberOfCorrectAnswers());
+      practiceResponseDTO.setAttempt(quizSetAttempt.getAttempt());
+      practiceResponseDTO.setPracticeTime(quizSetAttempt.getPracticeTime());
+      return practiceResponseDTO;
+    }).collect(Collectors.toList());
+
+    return ResponseEntity.ok(practiceResponseDTOs);
+  }
+
+  public ResponseEntity<List<PracticeQuizResponseDTO>> getPracticeDetail(String name, int id) {
+    User user = userRepository.findByEmail(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    QuizSetAttempt quizSetAttempt = quizSetAttemptRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quiz set attempt not found"));
+
+    List<PracticeQuizResponseDTO> practiceQuizResponseDTOs = quizSetAttempt.getAttemptDetails().stream().map(attemptDetail -> {
+      PracticeQuizResponseDTO practiceQuizResponseDTO = new PracticeQuizResponseDTO();
+      practiceQuizResponseDTO.setQuizId(attemptDetail.getQuiz().getId());
+      practiceQuizResponseDTO.setContent(attemptDetail.getQuiz().getContent());
+      practiceQuizResponseDTO.setAnswers(attemptDetail.getQuiz().getAnswers());
+      practiceQuizResponseDTO.setChooseAnswer(attemptDetail.getAnswer());
+      return practiceQuizResponseDTO;
+    }).collect(Collectors.toList());
+
+    return ResponseEntity.ok(practiceQuizResponseDTOs);
   }
 }
