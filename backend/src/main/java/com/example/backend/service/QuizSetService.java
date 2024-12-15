@@ -92,12 +92,18 @@ public class QuizSetService {
   }
 
 
-  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(int id) {
+  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(String email, int id) {
     var quizSet = quizSetRepository.findById(id);
     if (quizSet.isEmpty()) {
       throw new ResourceNotFoundException("Quiz set with id " + id + " not found");
     }
-    return ResponseEntity.status(200).body(modelMapper.map(quizSet.get(), QuizSetResponseDTO.class));
+
+    QuizSetResponseDTO result = modelMapper.map(quizSet.get(), QuizSetResponseDTO.class);
+
+    if(quizSet.get().getCreator().getEmail().equals(email)){
+      result.setIsYourQuizSet(true);
+    }
+    return ResponseEntity.status(200).body(result);
   }
 
   public ResponseEntity<QuizSetResponseDTO> createQuizSet(String email, QuizSetRequestDTO quizSetRequestDTO) {

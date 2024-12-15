@@ -50,8 +50,8 @@ public class QuizSetController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(@PathVariable int id) {
-      return quizSetService.getQuizSetById(id);
+  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(Principal principal, @PathVariable int id) {
+      return quizSetService.getQuizSetById(principal.getName(),id);
   }
 
   @PostMapping

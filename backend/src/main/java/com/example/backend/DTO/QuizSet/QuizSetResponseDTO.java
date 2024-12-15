@@ -19,6 +19,8 @@ public class QuizSetResponseDTO {
 
   private Date createdTime;
 
+  private Boolean isYourQuizSet;
+
   private List<QuizDTO> quizzes;
 
   private int topicId;
