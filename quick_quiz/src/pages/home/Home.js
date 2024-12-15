@@ -1,54 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
-import QuizSetCard from "../quizset/QuizSetCard"; // Import QuizSetCard
+import { Box, IconButton, Skeleton, Typography } from "@mui/material";
+import QuizSetCard from "../quizset/QuizSetCard";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import quizSetService from "../../services/quizSetService"; 
+
+const calculateItemsPerPage = () => {
+  const screenWidth = window.innerWidth;
+  if (screenWidth >= 2200) return 4;
+  if (screenWidth >= 1800) return 3;
+  if (screenWidth >= 1400) return 2;
+  if (screenWidth >= 1000) return 1;
+  if (screenWidth >= 600) return 1;
+  return 1;
+};
 
 const Home = () => {
-  const myQuizSets = [
-    { title: "Quiz Set 1", questionCount: 10, quizId: 1 },
-    { title: "Quiz Set 2", questionCount: 15, quizId: 2 },
-    { title: "Quiz Set 3", questionCount: 20, quizId: 3 },
-    { title: "Quiz Set 4", questionCount: 5, quizId: 4 },
-    { title: "Quiz Set 5", questionCount: 25, quizId: 5 },
-    { title: "Quiz Set 6", questionCount: 18, quizId: 6 },
-    { title: "Quiz Set 7", questionCount: 7, quizId: 7 },
-    { title: "Quiz Set 8", questionCount: 14, quizId: 8 },
-    { title: "Quiz Set 9", questionCount: 13, quizId: 9 },
-    { title: "Quiz Set 10", questionCount: 30, quizId: 10 },
-  ];
-
-  const savedQuizSets = [
-    { title: "Saved Quiz Set 1", questionCount: 8, quizId: 11 },
-    { title: "Saved Quiz Set 2", questionCount: 12, quizId: 12 },
-    { title: "Saved Quiz Set 3", questionCount: 5, quizId: 13 },
-    { title: "Saved Quiz Set 4", questionCount: 20, quizId: 14 },
-    { title: "Saved Quiz Set 5", questionCount: 6, quizId: 15 },
-    { title: "Saved Quiz Set 6", questionCount: 17, quizId: 16 },
-    { title: "Saved Quiz Set 7", questionCount: 3, quizId: 17 },
-    { title: "Saved Quiz Set 8", questionCount: 22, quizId: 18 },
-    { title: "Saved Quiz Set 9", questionCount: 11, quizId: 19 },
-    { title: "Saved Quiz Set 10", questionCount: 19, quizId: 20 },
-  ];
-
+  const [myQuizSets, setMyQuizSets] = useState([]);
+  const [savedQuizSets, setSavedQuizSets] = useState([]);
   const [myPage, setMyPage] = useState(1);
   const [savedPage, setSavedPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(calculateItemsPerPage());
-
- 
-  function calculateItemsPerPage() {
-    const screenWidth = window.innerWidth;
-    if (screenWidth >= 2200) return 5;
-    if (screenWidth >= 1800) return 4;
-    if (screenWidth >= 1400) return 3;
-    if (screenWidth >= 1000) return 2;
-    if (screenWidth >= 600) return 1;
-    return 1;
-  }
+  const [loading, setLoading] = useState(false);
+  const [hasMoreMyQuizSets, setHasMoreMyQuizSets] = useState(true); 
+  const [hasMoreSavedQuizSets, setHasMoreSavedQuizSets] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
       setItemsPerPage(calculateItemsPerPage());
-      setMyPage(1); 
+      setMyPage(1);
       setSavedPage(1);
     };
 
@@ -58,21 +37,45 @@ const Home = () => {
     };
   }, []);
 
-  const handlePageChange = (direction, type) => {
-    if (type === "my") {
-      const maxPage = Math.ceil(myQuizSets.length / itemsPerPage);
-      if (direction === "next" && myPage < maxPage) setMyPage(myPage + 1);
-      if (direction === "prev" && myPage > 1) setMyPage(myPage - 1);
-    } else {
-      const maxPage = Math.ceil(savedQuizSets.length / itemsPerPage);
-      if (direction === "next" && savedPage < maxPage) setSavedPage(savedPage + 1);
-      if (direction === "prev" && savedPage > 1) setSavedPage(savedPage - 1);
+  const fetchQuizSets = async (page, limit, setFunction, setHasMoreFunction, type = "my") => {
+    setLoading(true);
+    try {
+      const data = await quizSetService.getQuizSetsByTopic({
+        topicId:"",
+        page: page - 1,
+        limit,
+      });
+
+      if (data.quizSets.length > 0) {
+        setFunction(data.quizSets); 
+        setHasMoreFunction(true);  
+      } else {
+        setHasMoreFunction(false); 
+      }
+    } catch (error) {
+      console.error('Failed to fetch ${type} quiz sets:', error);
+      setHasMoreFunction(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getPaginatedQuizSets = (quizSets, page) => {
-    const startIndex = (page - 1) * itemsPerPage;
-    return quizSets.slice(startIndex, startIndex + itemsPerPage);
+  useEffect(() => {
+    fetchQuizSets(myPage, itemsPerPage, setMyQuizSets, setHasMoreMyQuizSets, "my");
+  }, [myPage, itemsPerPage]);
+
+  useEffect(() => {
+    fetchQuizSets(savedPage, itemsPerPage, setSavedQuizSets, setHasMoreSavedQuizSets, "saved");
+  }, [savedPage, itemsPerPage]);
+
+  const handlePageChange = (direction, type) => {
+    if (type === "my") {
+      if (direction === "next" && hasMoreMyQuizSets) setMyPage(myPage + 1);
+      if (direction === "prev" && myPage > 1) setMyPage(myPage - 1);
+    } else {
+      if (direction === "next" && hasMoreSavedQuizSets) setSavedPage(savedPage + 1);
+      if (direction === "prev" && savedPage > 1) setSavedPage(savedPage - 1);
+    }
   };
 
   return (
@@ -83,24 +86,47 @@ const Home = () => {
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-        <IconButton onClick={() => handlePageChange("prev", "my")} disabled={myPage === 1}>
+        <IconButton
+          onClick={() => handlePageChange("prev", "my")}
+          disabled={myPage === 1}
+        >
           <ArrowBack />
         </IconButton>
 
         <Box sx={{ display: "flex", justifyContent: "stretch", gap: 2 }}>
-          {getPaginatedQuizSets(myQuizSets, myPage).map((quizSet) => (
-            <QuizSetCard
-              key={quizSet.quizId}
-              title={quizSet.title}
-              questionCount={quizSet.questionCount}
-              quizId={quizSet.quizId}
-            />
-          ))}
+          {loading ? (
+            Array.from({ length: itemsPerPage }).map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  minWidth: 350,
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  m: 2,
+                }}
+              >
+                <Skeleton variant="rectangular" height={118} sx={{ borderRadius: 1 }} />
+                <Skeleton width="80%" height={20} sx={{ mt: 1 }} />
+                <Skeleton width="80%" height={20} sx={{ mt: 1 }} />
+              </Box>
+            ))
+          ) : (
+            myQuizSets.map((quizSet) => (
+              <QuizSetCard
+                key={quizSet.id}
+                title={quizSet.name}
+                description={quizSet.description}
+                quizId={quizSet.id}
+              />
+            ))
+          )}
         </Box>
 
         <IconButton
           onClick={() => handlePageChange("next", "my")}
-          disabled={myPage === Math.ceil(myQuizSets.length / itemsPerPage)}
+          disabled={!hasMoreMyQuizSets}
         >
           <ArrowForward />
         </IconButton>
@@ -112,24 +138,47 @@ const Home = () => {
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-        <IconButton onClick={() => handlePageChange("prev", "saved")} disabled={savedPage === 1}>
+        <IconButton
+          onClick={() => handlePageChange("prev", "saved")}
+          disabled={savedPage === 1}
+        >
           <ArrowBack />
         </IconButton>
 
         <Box sx={{ display: "flex", justifyContent: "stretch", gap: 2 }}>
-          {getPaginatedQuizSets(savedQuizSets, savedPage).map((quizSet) => (
-            <QuizSetCard
-              key={quizSet.quizId}
-              title={quizSet.title}
-              questionCount={quizSet.questionCount}
-              quizId={quizSet.quizId}
-            />
-          ))}
+          {loading ? (
+            Array.from({ length: itemsPerPage }).map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  minWidth: 350,
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  m: 2,
+                }}
+              >
+                <Skeleton variant="rectangular" height={118} sx={{ borderRadius: 1 }} />
+                <Skeleton width="80%" height={20} sx={{ mt: 1 }} />
+                <Skeleton width="80%" height={20} sx={{ mt: 1 }} />
+              </Box>
+            ))
+          ) : (
+            savedQuizSets.map((quizSet) => (
+              <QuizSetCard
+                key={quizSet.id}
+                title={quizSet.name}
+                description={quizSet.description}
+                quizId={quizSet.id}
+              />
+            ))
+          )}
         </Box>
 
         <IconButton
           onClick={() => handlePageChange("next", "saved")}
-          disabled={savedPage === Math.ceil(savedQuizSets.length / itemsPerPage)}
+          disabled={!hasMoreSavedQuizSets}
         >
           <ArrowForward />
         </IconButton>
@@ -138,4 +187,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home; 

@@ -64,14 +64,14 @@ function App() {
                 {/* Private Routes */}
                 <Route path="/home" element={<PrivateRoute isAuthenticated={isAuthenticated}><Home /></PrivateRoute>} />
                 <Route path="/createquizset" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizCreate /></PrivateRoute>} />
-                <Route path="/quizsetview/:id" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizSetView /></PrivateRoute>} />
-                <Route path="/quiz/:id" element={<PrivateRoute isAuthenticated={isAuthenticated}><Quiz /></PrivateRoute>} />
+                <Route path="/quizsetview/:quizId" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizSetView /></PrivateRoute>} />
+                <Route path="/quiz/:quizId" element={<PrivateRoute isAuthenticated={isAuthenticated}><Quiz /></PrivateRoute>} />
                 <Route path="/result" element={<PrivateRoute isAuthenticated={isAuthenticated}><Result /></PrivateRoute>} />
                 <Route path="/topic" element={<PrivateRoute isAuthenticated={isAuthenticated}><Topic /></PrivateRoute>} />
                 <Route path="/createtopic" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicCreate /></PrivateRoute>} />
                 <Route path="/quizsetlibrary" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizSetLibrary /></PrivateRoute>} />
                 <Route path="/history" element={<PrivateRoute isAuthenticated={isAuthenticated}><History /></PrivateRoute>} />
-                <Route path="/topic/:id" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicView /></PrivateRoute>} />
+                <Route path="/topic/:topicId" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicView /></PrivateRoute>} />
                 <Route path="/test" element={<PrivateRoute isAuthenticated={isAuthenticated}><Test /></PrivateRoute>} />
               </Routes>
             </Box>

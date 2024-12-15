@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   TextField,
@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import TopicPreview from "./TopicPreview";
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import topicService from "../../services/topicService";
 
 const Topic = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,12 +22,21 @@ const Topic = () => {
 
   const itemsPerPage = 10;
 
-  const topics = [
-    { title: "Mathematics", description: "Learn about algebra, geometry, and more.", topicId: 1 },
-    { title: "History", description: "Dive into ancient and modern history.", topicId: 2 },
-    { title: "Science", description: "Explore physics, chemistry, and biology.", topicId: 3 },
-    // Add more topics here...
-  ];
+  const [topics, setTopics] = useState([]); 
+  
+    useEffect(() => {
+      
+      const fetchTopics = async () => {
+        try {
+          const response = await topicService.getTopics();
+          setTopics(response.topics);
+        } catch (error) {
+          console.error("Failed to fetch topics", error);
+        }
+      };
+  
+      fetchTopics();
+    }, []);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -42,7 +52,7 @@ const Topic = () => {
 
   const filterAndSortTopics = (topics) => {
     return topics
-      .filter((topic) => topic.title.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter((topic) => topic.name.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => {
         if (sortOption === "recent") return b.topicId - a.topicId;
         if (sortOption === "alphabetical") return a.title.localeCompare(b.title);
@@ -70,12 +80,12 @@ const Topic = () => {
         }}
       >
         <Typography variant="h4">
-          Các bộ câu hỏi
+          Các chủ đề
         </Typography>
         <IconButton href="/createtopic" sx={{}}>
           <CreateNewFolderIcon />
           <Typography variant="subtitle1">
-            Tạo bộ câu hỏi
+            Tạo chủ đề
           </Typography>
         </IconButton>
       </Box>
@@ -100,11 +110,11 @@ const Topic = () => {
 
       <Grid container spacing={2}>
         {displayedTopics.map((topic) => (
-          <Grid item xs={12} key={topic.topicId}>
+          <Grid item xs={12} key={topic.id}>
             <TopicPreview
-              title={topic.title}
+              title={topic.name}
               description={topic.description}
-              topicId={topic.topicId}
+              topicId={topic.id}
             />
           </Grid>
         ))}

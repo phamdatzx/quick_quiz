@@ -22,7 +22,7 @@ function QuizCreate() {
   const [selectedTopic, setSelectedTopic] = useState("");
 
   useEffect(() => {
-    console.log("API URL:", process.env.REACT_APP_API_URL);
+    
     const fetchTopics = async () => {
       try {
         const response = await topicService.getTopics();

@@ -10,7 +10,7 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const QuizSetCard = ({ title, questionCount, quizId }) => {
+const QuizSetCard = ({ title, description, quizId }) => {
 
   const navigate = useNavigate();
   const handleClick = () => {
@@ -49,11 +49,14 @@ const QuizSetCard = ({ title, questionCount, quizId }) => {
           <Typography
             sx={{
               paddingBottom: 1,
+              maxWidth:'80%'
             }}
           >
             {title}
           </Typography>
-          <Chip label={questionCount + " Câu hỏi"} sx={{}}></Chip>
+          <Chip label={description} sx={{
+            maxWidth: "80%"
+          }}></Chip>
         </CardContent>
       </CardActionArea>
     </Card>

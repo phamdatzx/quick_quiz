@@ -5,16 +5,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 const Result = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { quizzes, userAnswers } = location.state;
+  const { quizzes = [], userAnswers = [] } = location.state || {};
 
+  // Tính số câu trả lời đúng
   const correctCount = quizzes.reduce(
     (count, quiz, index) =>
       userAnswers[index] === quiz.correctAnswer ? count + 1 : count,
     0
   );
+  console.log(quizzes);
 
   return (
     <Box sx={{ p: 2, justifyItems: "center" }}>
+      {/* Kết quả tổng quát */}
       <Box
         sx={{
           display: "flex",
@@ -37,6 +40,7 @@ const Result = () => {
         </Typography>
       </Box>
 
+      {/* Hiển thị câu hỏi và các lựa chọn */}
       <Box sx={{ mt: 2 }}>
         {quizzes.map((quiz, index) => (
           <Box
@@ -58,10 +62,11 @@ const Result = () => {
               Câu {index + 1}: {quiz.question}
             </Typography>
 
-            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}> 
-              {quiz.choices.map((choice, choiceIndex) => {
-                const isCorrect = choiceIndex === quiz.correctAnswer;
-                const isSelected = choiceIndex === userAnswers[index];
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, flexDirection: "column", justifySelf:'center'}}>
+              {quiz.answers && Array.isArray(quiz.answers) && quiz.answers.map((answer, choiceIndex) => {
+                // Kiểm tra đáp án đúng và đáp án người dùng đã chọn
+                const isCorrect = answer === quiz.correctAnswer;
+                const isSelected = answer === userAnswers[index];
 
                 return (
                   <Box
@@ -72,20 +77,21 @@ const Result = () => {
                       p: 1,
                       borderRadius: 2,
                       backgroundColor: isCorrect
-                        ? "#6FD181"
+                        ? "#6FD181" // Màu xanh nếu đúng
                         : isSelected
-                        ? "#A70F0F"
-                        : "#f0f0f0",
-                      
+                        ? "#A70F0F" // Màu đỏ nếu chọn sai
+                        : "#f0f0f0", // Màu xám nếu chưa chọn
                       boxShadow: isCorrect || isSelected
                         ? "0px 4px 6px rgba(0, 0, 0, 0.2)"
                         : "none",
                     }}
                   >
-                    <Typography sx={{
-                      color: isCorrect || isSelected ? "#fff" : "#000",
-                    }}>
-                      {choice}
+                    <Typography
+                      sx={{
+                        color: isCorrect || isSelected ? "#fff" : "#000",
+                      }}
+                    >
+                      {answer}
                     </Typography>
                   </Box>
                 );
