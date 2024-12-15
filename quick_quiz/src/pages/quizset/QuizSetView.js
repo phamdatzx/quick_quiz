@@ -99,7 +99,7 @@ const QuizSetView = () => {
       )}
 
       {/* Hiển thị danh sách câu hỏi nếu allowShowAnswer là true */}
-      {quizOverview?.allowShowAnswer ? (
+      {quizOverview?.isYourQuizSet ? (
         questions.length > 0 ? (
           <List>
             {questions.map((question) => (

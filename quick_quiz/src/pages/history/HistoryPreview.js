@@ -2,11 +2,11 @@ import React from "react";
 import { Box, Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const HistoryPreview = ({ quizsetId, attemptTime, attemptId }) => {
+const HistoryPreview = ({data, name, attempt, attemptTime }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    //TODO more
+    navigate("/historydetail", { state: { data } });
   };
 
   return (
@@ -25,10 +25,10 @@ const HistoryPreview = ({ quizsetId, attemptTime, attemptId }) => {
       <CardActionArea onClick={handleClick}>
         <CardContent>
           <Typography variant="subtitle1" sx={{ paddingBottom: 1, fontWeight: "bold" }}>
-            Quiz Set ID: {quizsetId}
+            Quiz Set: {name} - Lần thử: {attempt}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Thời gian làm bài: {new Date(attemptTime).toLocaleString()}
+            Thời gian làm bài: {attemptTime}
           </Typography>
         </CardContent>
       </CardActionArea>

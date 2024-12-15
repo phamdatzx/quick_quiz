@@ -17,6 +17,8 @@ import QuizSetView from "./pages/quizset/QuizSetView";
 import TopicCreate from "./pages/topic/TopicCreate";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthenticated } from "./stores/authSlice";
+import NotFound from "./pages/notfound/NotFound";
+import HistoryDetail from "./pages/history/HistoryDetail";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -71,8 +73,11 @@ function App() {
                 <Route path="/createtopic" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicCreate /></PrivateRoute>} />
                 <Route path="/quizsetlibrary" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizSetLibrary /></PrivateRoute>} />
                 <Route path="/history" element={<PrivateRoute isAuthenticated={isAuthenticated}><History /></PrivateRoute>} />
+                <Route path="/historydetail"  element={<PrivateRoute isAuthenticated={isAuthenticated}><HistoryDetail /></PrivateRoute>} />
                 <Route path="/topic/:topicId" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicView /></PrivateRoute>} />
                 <Route path="/test" element={<PrivateRoute isAuthenticated={isAuthenticated}><Test /></PrivateRoute>} />
+
+                <Route path="*" element={<NotFound/> } />
               </Routes>
             </Box>
           </Box>

@@ -3,6 +3,7 @@ import QuizCard from "../../components/QuizCard";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import quizSetService from "../../services/quizSetService";
+import practiceService from "../../services/practiceService";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -33,17 +34,25 @@ const Quiz = () => {
   // Hàm xử lý chọn câu trả lời
   const handleSelectAnswer = (quizIndex, selectedAnswer) => {
     const newAnswers = [...userAnswers];
-    newAnswers[quizIndex] = selectedAnswer; // Store the selected answer directly
+    newAnswers[quizIndex] = selectedAnswer; 
     setUserAnswers(newAnswers);
     console.log(newAnswers);
   };
 
-  const handleSubmit = () => {
-    const correctAnswers = quizzes.map((quiz, index) => {
-      return quiz.correctAnswer === userAnswers[index]; 
-    });
+  const handleSubmit = async () => {
+    const submissionData = quizzes.map((quiz, index) => ({
+      quizId: quiz.id,
+      answer: userAnswers[index],
+    }));
 
-    navigate("/result", { state: { quizzes, userAnswers } });
+    try {
+      await practiceService.submitPracticeAttempt(quizId, submissionData);
+      const submitTime = new Date().toISOString();
+      navigate("/result", { state: { quizzes, userAnswers, quizId, submitTime } });
+    } catch (err) {
+      console.error("Lỗi khi nộp bài:", err);
+      alert("Đã xảy ra lỗi khi nộp bài. Vui lòng thử lại sau.");
+    }
   };
 
   if (loading) {
