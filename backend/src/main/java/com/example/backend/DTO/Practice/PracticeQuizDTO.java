@@ -13,6 +13,4 @@ public class PracticeQuizDTO {
   private int quizId;
 
   private String answer;
-
-  private Boolean isCorrect;
 }

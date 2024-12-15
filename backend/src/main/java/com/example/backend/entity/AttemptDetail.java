@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,7 +28,7 @@ public class AttemptDetail {
   @JoinColumn(name = "quiz_set_attempt_id")
   private QuizSetAttempt quizSetAttempt;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "quiz_id")
   private Quiz quiz;
 

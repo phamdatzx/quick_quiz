@@ -1,13 +1,13 @@
 package com.example.backend.service;
 
 import com.example.backend.DTO.Practice.PracticeQuizDTO;
-import com.example.backend.DTO.Practice.PracticeRequestDTO;
 import com.example.backend.entity.AttemptDetail;
 import com.example.backend.entity.QuizSet;
 import com.example.backend.entity.QuizSetAttempt;
 import com.example.backend.entity.User;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.AttemptDetailRepository;
+import com.example.backend.repository.QuizRepository;
 import com.example.backend.repository.QuizSetAttemptRepository;
 import com.example.backend.repository.QuizSetRepository;
 import com.example.backend.repository.UserRepository;
@@ -21,15 +21,18 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class PracticeService {
-  QuizSetRepository quizSetRepository;
 
-  AttemptDetailRepository attemptDetailRepository;
+  private final QuizRepository quizRepository;
 
-  QuizSetAttemptRepository quizSetAttemptRepository;
+  private final QuizSetRepository quizSetRepository;
 
-  UserRepository userRepository;
+  private final AttemptDetailRepository attemptDetailRepository;
 
-  public ResponseEntity<String> savePractice(String email, int quizSetId, PracticeRequestDTO practiceRequestDTO) {
+  private final QuizSetAttemptRepository quizSetAttemptRepository;
+
+  private final UserRepository userRepository;
+
+  public ResponseEntity<String> savePractice(String email, int quizSetId, List<PracticeQuizDTO> listPracticeQuizDTO) {
     User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     QuizSet quizSet = quizSetRepository.findById(quizSetId).orElseThrow(() -> new ResourceNotFoundException("Quiz set not found"));
 
@@ -39,12 +42,27 @@ public class PracticeService {
     quizSetAttempt.setAttempt(this.getMaxAttempt(user.getId(), quizSetId) + 1);
     quizSetAttempt.setPracticeTime(new Date());
 
-    List<AttemptDetail> attemptDetails = practiceRequestDTO.getQuizzes().stream().map(quizDTO -> {
+    List<AttemptDetail> attemptDetails = listPracticeQuizDTO.stream().map(quizDTO -> {
       AttemptDetail attemptDetail = new AttemptDetail();
       attemptDetail.setQuizSetAttempt(quizSetAttempt);
-      attemptDetail.getQuiz().setId(quizDTO.getQuizId());
+
+      var quiz = quizRepository.findById(quizDTO.getQuizId());
+
+      if(quiz.isEmpty()) {
+        throw new ResourceNotFoundException("Quiz not found");
+      }
+
+      attemptDetail.setQuiz(quiz.get());
       attemptDetail.setAnswer(quizDTO.getAnswer());
-      attemptDetail.setIsCorrect(quizDTO.getIsCorrect());
+
+
+      if(quiz.get().getCorrectAnswer().equals(quizDTO.getAnswer())) {
+        attemptDetail.setIsCorrect(true);
+      } else {
+        attemptDetail.setIsCorrect(false);
+      }
+
+      //attemptDetail.setIsCorrect(quizDTO.getIsCorrect());
       return attemptDetail;
     }).collect(Collectors.toList());
 
@@ -52,7 +70,6 @@ public class PracticeService {
     quizSetAttempt.setNumberOfCorrectAnswers((int) attemptDetails.stream().filter(AttemptDetail::getIsCorrect).count());
 
     quizSetAttemptRepository.save(quizSetAttempt);
-    attemptDetailRepository.saveAll(attemptDetails);
 
     return ResponseEntity.status(200).body("Practice saved successfully");
   }
