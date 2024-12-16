@@ -168,9 +168,9 @@ const HistoryDetail = () => {
       <Button
         variant="contained"
         sx={{ mt: 2, height: "10vh", width: "60vw" }}
-        onClick={() => navigate("/home")}
+        onClick={() => navigate("/history")}
       >
-        Làm lại
+        Trở về
       </Button>
     </Box>
   );

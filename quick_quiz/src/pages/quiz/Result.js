@@ -173,7 +173,7 @@ const Result = () => {
         sx={{ mt: 2, height: "10vh", width: "60vw" }}
         onClick={() => navigate("/home")}
       >
-        Làm lại
+        Trở về màn hình chính
       </Button>
     </Box>
   );
