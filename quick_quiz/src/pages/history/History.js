@@ -10,22 +10,8 @@ import {
   Pagination,
   Grid,
 } from "@mui/material";
-import HistoryPreview from "./HistoryPreview"; // Assuming a preview component for individual history
-
-// Mock data for history attempts
-const mockHistoryData = [
-  { id: 1, quizset_id: 101, attempt_time: "2024-12-01T10:00:00Z" },
-  { id: 2, quizset_id: 102, attempt_time: "2024-12-02T14:30:00Z" },
-  { id: 3, quizset_id: 103, attempt_time: "2024-12-05T09:15:00Z" },
-  { id: 4, quizset_id: 104, attempt_time: "2024-12-06T16:45:00Z" },
-  { id: 5, quizset_id: 105, attempt_time: "2024-12-07T18:00:00Z" },
-  { id: 6, quizset_id: 106, attempt_time: "2024-12-08T20:30:00Z" },
-  { id: 7, quizset_id: 107, attempt_time: "2024-12-09T11:00:00Z" },
-  { id: 8, quizset_id: 108, attempt_time: "2024-12-10T13:10:00Z" },
-  { id: 9, quizset_id: 109, attempt_time: "2024-12-10T17:25:00Z" },
-  { id: 10, quizset_id: 110, attempt_time: "2024-12-11T15:40:00Z" },
-  // Add more mock data if needed
-];
+import HistoryPreview from "./HistoryPreview";
+import practiceService from "../../services/practiceService";
 
 const History = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,9 +21,19 @@ const History = () => {
 
   const [historyData, setHistoryData] = useState([]);
 
+  // Fetch data from API
   useEffect(() => {
-    // Simulate API call
-    setHistoryData(mockHistoryData);
+    const fetchHistoryData = async () => {
+      try {
+        const response = await practiceService.getAllPracticeAttempt();
+        
+        setHistoryData(response);
+      } catch (error) {
+        console.error("Failed to fetch history data:", error);
+      }
+    };
+
+    fetchHistoryData();
   }, []);
 
   const handleSearchChange = (event) => {
@@ -55,17 +51,19 @@ const History = () => {
   const filterAndSortHistory = (history) => {
     return history
       .filter((historyItem) => {
-        // Search filter by quizset_id or attempt_time
+        // Search filter by quizSet.name or practiceTime
         return (
-          historyItem.quizset_id
-            .toString()
+          historyItem.quizSet.name
+            .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          historyItem.attempt_time.includes(searchTerm.toLowerCase())
+          historyItem.practiceTime.toLowerCase().includes(searchTerm.toLowerCase())
         );
       })
       .sort((a, b) => {
-        if (sortOption === "recent") return new Date(b.attempt_time) - new Date(a.attempt_time);
-        if (sortOption === "alphabetical") return a.quizset_id - b.quizset_id;
+        if (sortOption === "recent")
+          return new Date(b.practiceTime) - new Date(a.practiceTime);
+        if (sortOption === "alphabetical")
+          return a.quizSet.name.localeCompare(b.quizSet.name);
         return 0;
       });
   };
@@ -114,9 +112,10 @@ const History = () => {
         {displayedHistory.map((historyItem) => (
           <Grid item xs={12} key={historyItem.id}>
             <HistoryPreview
-              quizsetId={historyItem.quizset_id}
-              attemptTime={historyItem.attempt_time}
-              attemptId={historyItem.id}
+              data={historyItem}
+              name={historyItem.quizSet.name}
+              attempt={historyItem.attempt}
+              attemptTime={new Date(historyItem.practiceTime).toLocaleString()}
             />
           </Grid>
         ))}

@@ -5,9 +5,9 @@ const QuizCard = ({ question, choices, onSelectAnswer, index }) => {
 
   const [selectedChoice, setSelectedChoice] = useState(null);
 
-  const handleChoiceSelect = (choiceIndex) => {
-    setSelectedChoice(choiceIndex);
-    onSelectAnswer(index, choiceIndex); 
+  const handleChoiceSelect = (choice) => {
+    setSelectedChoice(choice);
+    onSelectAnswer(index, choice); 
   };
 
   return (
@@ -74,15 +74,15 @@ const QuizCard = ({ question, choices, onSelectAnswer, index }) => {
                 wordBreak: "break-word",
                 textAlign: "justify",
                 backgroundColor:
-                  selectedChoice === choiceIndex
+                  selectedChoice === choice
                     ? "#1935CA"
                     : "#fff",
                     color:
-                    selectedChoice === choiceIndex
+                    selectedChoice === choice
                       ? "#fff"
                       : "#4A4A4A",
               }}
-              onClick={() => handleChoiceSelect(choiceIndex)}
+              onClick={() => handleChoiceSelect(choice)}
             >
               {choice}
             </Button>

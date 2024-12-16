@@ -15,9 +15,18 @@ public class QuizSetResponseDTO {
 
   private String description;
 
+  private Boolean allowShowAnswer;
+
   private Date createdTime;
+
+  private Boolean isYourQuizSet;
 
   private List<QuizDTO> quizzes;
 
   private int topicId;
+
+  public QuizSetResponseDTO(int id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 }

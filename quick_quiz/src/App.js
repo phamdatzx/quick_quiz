@@ -2,6 +2,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Box, ThemeProvider } from "@mui/material";
+import 'react-toastify/dist/ReactToastify.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import { BrowserRouter } from 'react-router-dom';
 import PrivateRoute from "./routes/PrivateRoute";
@@ -15,6 +16,11 @@ import History from "./pages/history/History";
 import TopicView from "./pages/topic/TopicView";
 import QuizSetView from "./pages/quizset/QuizSetView";
 import TopicCreate from "./pages/topic/TopicCreate";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthenticated } from "./stores/authSlice";
+import NotFound from "./pages/notfound/NotFound";
+import HistoryDetail from "./pages/history/HistoryDetail";
+import { ToastContainer } from "react-toastify";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -28,7 +34,17 @@ const Result = lazy(() => import("./pages/quiz/Result"));
 const Test = lazy(() => import("./pages/quizset/QuizSetCard"));
 
 function App() {
-  let isAuthenticated = true;
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch(setAuthenticated(true));
+    }else {
+      dispatch(setAuthenticated(false)); 
+    }
+  }, [dispatch]);
   return (
     <BrowserRouter>
       <Suspense
@@ -38,26 +54,33 @@ function App() {
             </Box>
           </div>} >
         <ThemeProvider theme={theme}>
-          <Box display={"flex"} sx={{height:'100%', backgroundColor:'#FBF9F9'}}>
+          <Box display={"flex"} sx={{ minHeight: '100vh',minWidth:'100vw', backgroundColor: '#FBF9F9' }}>
+          <ToastContainer />
             {isAuthenticated && <Sidebar />}
             <Box flex={1}>
               {isAuthenticated && <Header />}
               <Routes>
-                <Route path="/SignIn" element={<SignIn />} />
-                <Route path="/SignUp" element={<SignUp />} />
-                <Route path="/ForgotPassword" element={<ForgotPassword />} />\
-                <Route path="/ResetPassword" element={<ResetPassword />} />
-                <Route path="/test" element={<Test />} />
-                <Route path="/quiz/:id" element={<Quiz />} />
-                <Route path="/createquizset" element={<QuizCreate />} />
-                <Route path="/quizsetview/:id" element={<QuizSetView/>} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/topic" element={<Topic />} />
-                <Route path="/createtopic" element={<TopicCreate />} />
-                <Route path="/result" element={<Result />} />
-                <Route path="/quizsetlibrary" element={<QuizSetLibrary />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/topic/:id" element={<TopicView />} />
+                {/* Public Routes */}
+                <Route path="/SignIn" element={<PublicRoute isAuthenticated={isAuthenticated}><SignIn /></PublicRoute>} />
+                <Route path="/SignUp" element={<PublicRoute isAuthenticated={isAuthenticated}><SignUp /></PublicRoute>} />
+                <Route path="/ForgotPassword" element={<PublicRoute isAuthenticated={isAuthenticated}><ForgotPassword /></PublicRoute>} />
+                <Route path="/ResetPassword" element={<PublicRoute isAuthenticated={isAuthenticated}><ResetPassword /></PublicRoute>} />
+
+                {/* Private Routes */}
+                <Route path="/home" element={<PrivateRoute isAuthenticated={isAuthenticated}><Home /></PrivateRoute>} />
+                <Route path="/createquizset" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizCreate /></PrivateRoute>} />
+                <Route path="/quizsetview/:quizId" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizSetView /></PrivateRoute>} />
+                <Route path="/quiz/:quizId" element={<PrivateRoute isAuthenticated={isAuthenticated}><Quiz /></PrivateRoute>} />
+                <Route path="/result" element={<PrivateRoute isAuthenticated={isAuthenticated}><Result /></PrivateRoute>} />
+                <Route path="/topic" element={<PrivateRoute isAuthenticated={isAuthenticated}><Topic /></PrivateRoute>} />
+                <Route path="/createtopic" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicCreate /></PrivateRoute>} />
+                <Route path="/quizsetlibrary" element={<PrivateRoute isAuthenticated={isAuthenticated}><QuizSetLibrary /></PrivateRoute>} />
+                <Route path="/history" element={<PrivateRoute isAuthenticated={isAuthenticated}><History /></PrivateRoute>} />
+                <Route path="/historydetail"  element={<PrivateRoute isAuthenticated={isAuthenticated}><HistoryDetail /></PrivateRoute>} />
+                <Route path="/topic/:topicId" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicView /></PrivateRoute>} />
+                <Route path="/test" element={<PrivateRoute isAuthenticated={isAuthenticated}><Test /></PrivateRoute>} />
+
+                <Route path="*" element={<NotFound/> } />
               </Routes>
             </Box>
           </Box>

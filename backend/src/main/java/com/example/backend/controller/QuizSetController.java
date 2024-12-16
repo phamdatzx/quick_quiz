@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,18 +27,6 @@ public class QuizSetController {
 
   private final QuizSetService quizSetService;
 
-  private final QuizService quizService;
-
-//  @GetMapping("/all")
-//  public ListQuizSetDTO getAllQuizSets(Principal principal,
-//      @RequestParam(required = false) String sortElement,
-//      @RequestParam(required = false) String direction,
-//      @RequestParam(required = false) String search,
-//      @RequestParam(defaultValue = "0") int page,
-//      @RequestParam(defaultValue = "10") int limit) {
-//    return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit);
-//  }
-
   @GetMapping("/all")
   public ListQuizSetDTO getAllQuizSets(Principal principal,
       @RequestParam(required = false) String sortElement,
@@ -49,9 +38,36 @@ public class QuizSetController {
     return quizSetService.getAllQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit, topicId);
   }
 
+  @GetMapping("/all-of-all-user")
+  public ListQuizSetDTO getAllQuizSetsOfAllUser(
+      @RequestParam(required = false) String sortElement,
+      @RequestParam(required = false) String direction,
+      @RequestParam(required = false) String search,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int limit,
+      @RequestParam(defaultValue = "0") int topicId) {
+    return quizSetService.getAllQuizSetsByUserEmail(null, sortElement,direction, search, page, limit, topicId);
+  }
+
+  @GetMapping("/random")
+  public ListQuizSetDTO getRandomQuizSet(@RequestParam(defaultValue = "10") int limit) {
+    return quizSetService.getRandomQuizSet(limit);
+  }
+
+  @GetMapping("/bookmarks")
+  public ListQuizSetDTO getAllBookmarkQuizSets(Principal principal,
+      @RequestParam(required = false) String sortElement,
+      @RequestParam(required = false) String direction,
+      @RequestParam(required = false) String search,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int limit,
+      @RequestParam(defaultValue = "0") int topicId) {
+    return quizSetService.getAllBookmarkQuizSetsByUserEmail(principal.getName(), sortElement,direction, search, page, limit, topicId);
+  }
+
   @GetMapping("/{id}")
-  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(@PathVariable int id) {
-      return quizSetService.getQuizSetById(id);
+  public ResponseEntity<QuizSetResponseDTO> getQuizSetById(Principal principal, @PathVariable int id) {
+      return quizSetService.getQuizSetById(principal.getName(),id);
   }
 
   @PostMapping
@@ -74,8 +90,24 @@ public class QuizSetController {
       return quizSetService.addMultipleQuizToQuizSet(principal.getName(),id, quizDTOs);
   }
 
-  @GetMapping("/{id}/quizzes")
-  public ResponseEntity<List<QuizDTO>> getQuizzesByQuizSetId(@PathVariable int id) {
-      return quizService.getQuizzesByQuizSetId(id);
+  @PatchMapping("/{id}/allow-show-answer")
+  public ResponseEntity<QuizSetResponseDTO> allowShowAnswer(Principal principal, @PathVariable int id) {
+      return quizSetService.allowShowAnswer(principal.getName(), id);
   }
+
+  @PatchMapping("/{id}/disable-show-answer")
+  public ResponseEntity<QuizSetResponseDTO> disable(Principal principal, @PathVariable int id) {
+    return quizSetService.disableShowAnswer(principal.getName(), id);
+  }
+
+  @PostMapping("/{id}/bookmark")
+  public ResponseEntity<String> addToBookmark(Principal principal, @PathVariable int id) {
+    return quizSetService.addToBookmark(principal.getName(), id);
+  }
+
+  @DeleteMapping("/{id}/bookmark")
+  public ResponseEntity<String> removeFromBookmark(Principal principal, @PathVariable int id) {
+    return quizSetService.removeFromBookmark(principal.getName(), id);
+  }
+
 }

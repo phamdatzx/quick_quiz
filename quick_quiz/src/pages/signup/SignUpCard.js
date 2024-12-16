@@ -1,21 +1,17 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
-import Checkbox from "@mui/material/Checkbox";
-import Divider from "@mui/material/Divider";
-import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "../../config/customizations/uicustomization.js";
+import { userRegister } from "../../stores/authSlice";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -24,233 +20,186 @@ const Card = styled(MuiCard)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-
   [theme.breakpoints.up("sm")]: {
     width: "450px",
   },
 }));
 
 const SignUpCard = () => {
-  //     const [emailError, setEmailError] = React.useState(false);
-  //   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  //   const [passwordError, setPasswordError] = React.useState(false);
-  //   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  //   const [open, setOpen] = React.useState(false);
-  //   const [email, setEmail] = React.useState('');
-  //   const [password, setPassword] = React.useState('');
-  //   const dispatch = useDispatch();
-  //   const navigate = useNavigate();
-  //   const { loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
 
-  //   const signInWithGoogle = () => {
-  //     window.open(`${API_BASE_URL}/auth/google`, '_self');
-  //   };
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  //   const handleSignIn = (e) => {
-  //     e.preventDefault();
-  //     if (!validateInputs()) return;
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  //     dispatch(userLogin({ email, password }))
-  //       .unwrap()
-  //       .then((response) => {
-  //         if (response) {
-  //           toast.success('Đăng nhập thành công');
-  //           navigate('/');
-  //         }
-  //       })
-  //       .catch((status) => {
-  //         if (status === 401) {
-  //           toast.error('Sai tài khoản hoặc mật khẩu');
-  //         } else {
-  //           toast.error('Đã xảy ra lỗi. Vui lòng thử lại.');
-  //         }
-  //       });
-  //   };
+  const { name, email, password, confirmPassword } = formData;
 
-  //   const handleClickOpen = () => {
-  //     setOpen(true);
-  //   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-  //   const handleClose = () => {
-  //     setOpen(false);
-  //   };
+  const validateInputs = () => {
+    let isValid = true;
 
-  //   const handleSubmit = (event) => {
-  //     event.preventDefault();
-  //     const data = new FormData(event.currentTarget);
-  //     console.log({
-  //       email: data.get('email'),
-  //       password: data.get('password'),
-  //     });
-  //   };
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error("Vui lòng điền đầy đủ thông tin!");
+      isValid = false;
+    }
 
-  //   const validateInputs = () => {
-  //     let isValid = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Vui lòng nhập email hợp lệ!");
+      isValid = false;
+    } else {
+      setEmailError("");
+    }
 
-  //     if (!email || !/\S+@\S+\.\S+/.test(email)) {
-  //       setEmailError(true);
-  //       setEmailErrorMessage('Vui lòng điền đúng địa chỉ email.');
-  //       isValid = false;
-  //     } else {
-  //       setEmailError(false);
-  //       setEmailErrorMessage('');
-  //     }
+    if (password.length < 6) {
+      setPasswordError("Mật khẩu phải có ít nhất 6 ký tự!");
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      setPasswordError("Mật khẩu không khớp!");
+      isValid = false;
+    } else {
+      setPasswordError("");
+    }
 
-  //     if (!password || password.length < 6) {
-  //       setPasswordError(true);
-  //       setPasswordErrorMessage('Mật khẩu phải chứa ít nhất 6 ký tự.');
-  //       isValid = false;
-  //     } else {
-  //       setPasswordError(false);
-  //       setPasswordErrorMessage('');
-  //     }
+    return isValid;
+  };
 
-  //     return isValid;
-  //   };
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) return;
+
+    try {
+      const resultAction = await dispatch(
+        userRegister({ name, email, password })
+      );
+      if (userRegister.fulfilled.match(resultAction)) {
+        toast.success("Đăng ký thành công!");
+        navigate("/SignIn");
+      } else {
+        toast.error(resultAction.payload || "Đăng ký thất bại!");
+      }
+    } catch {
+      toast.error(error || "Đã có lỗi xảy ra!");
+    }
+  };
 
   return (
-    <Card variant="basic" sx={{ boxShadow: "none", display:"flex" }}>
-      <Box
-        sx={{
-          display: { xs: "flex", md: "none" },
-        }}
-      ></Box>
+    <Card>
       <Typography
         component="h1"
         variant="h4"
-        sx={{
-          width: "100%",
-          fontSize: "clamp(2rem, 10vw, 2.15rem)",
-          justifyContent: "center",
-          display: "flex",
-        }}
-        /* disabled={loading} */
+        sx={{ textAlign: "center", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
       >
         Đăng ký
-        {/* {loading && '...'} */}
       </Typography>
       <Box
         component="form"
-        /* onSubmit={handleSubmit} */
+        onSubmit={handleSignUp}
         noValidate
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          gap: 2,
-        }}
+        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
       >
+        {/* Họ Tên */}
+        <FormControl>
+          <FormLabel htmlFor="name">Họ Tên</FormLabel>
+          <TextField
+            id="name"
+            name="name"
+            value={name}
+            onChange={handleChange}
+            placeholder="Nguyễn Văn A"
+            fullWidth
+            required
+            variant="outlined"
+          />
+        </FormControl>
+
+        {/* Email */}
         <FormControl>
           <FormLabel htmlFor="email">Email</FormLabel>
           <TextField
-          /* error={emailError}
-                helperText={emailErrorMessage} */
-
-          id="email"
-          type="email"
-          name="email"
-          placeholder="your@email.com"
-          autoComplete="email"
-          autoFocus
-          required
-          // fullWidth
-          // variant="outlined"
-          // color={/* emailError ? 'error' : */ "primary"}
-          sx={{
-            ariaLabel: "email",
-            
-          }}
-          /* onChange={(e) => setEmail(e.target.value)} */
+            id="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+            placeholder="your@email.com"
+            fullWidth
+            required
+            variant="outlined"
+            error={!!emailError}
+            helperText={emailError}
           />
         </FormControl>
 
+        {/* Mật khẩu */}
         <FormControl>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <FormLabel htmlFor="password">Mật khẩu</FormLabel>
-          </Box>
+          <FormLabel htmlFor="password">Mật khẩu</FormLabel>
           <TextField
-            /* error={passwordError}
-                helperText={passwordErrorMessage} */
-            name="password"
-            placeholder="••••••"
-            type="password"
             id="password"
-            autoFocus
-            required
-            fullWidth
-            variant="outlined"
-            color={/* passwordError ? 'error' :  */ "primary"}
-            /* onChange={(e) => setPassword(e.target.value)} */
-            sx={{
-              ariaLabel: "password",
-              mb: 2,
-            }}
-          />
-        </FormControl>
-
-        <FormControl>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <FormLabel htmlFor="password">Nhập lại mật khẩu</FormLabel>
-          </Box>
-          <TextField
-            /* error={passwordError}
-                helperText={passwordErrorMessage} */
-            name="passwordReEnter"
+            name="password"
+            value={password}
+            onChange={handleChange}
             placeholder="••••••"
             type="password"
-            id="passwordReEnter"
-            autoFocus
-            required
             fullWidth
+            required
             variant="outlined"
-            color={/* passwordError ? 'error' :  */ "primary"}
-            /* onChange={(e) => setPassword(e.target.value)} */
-            sx={{
-              ariaLabel: "password",
-              mb: 2,
-            }}
+            error={!!passwordError}
           />
         </FormControl>
 
+        {/* Nhập lại mật khẩu */}
+        <FormControl>
+          <FormLabel htmlFor="confirmPassword">Nhập lại mật khẩu</FormLabel>
+          <TextField
+            id="confirmPassword"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={handleChange}
+            placeholder="••••••"
+            type="password"
+            fullWidth
+            required
+            variant="outlined"
+            error={!!passwordError}
+            helperText={passwordError}
+          />
+        </FormControl>
 
-        {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
-
+        {/* Nút đăng ký */}
         <Button
-          className="Button"
           type="submit"
-          fullWidth
           variant="contained"
-          /* onClick={handleSignIn} 
-              disabled={loading}  */
-          sx={{
-            height: "54px",
-            my: 2,
-          }}
+          fullWidth
+          sx={{ height: "54px", mt: 2 }}
+          disabled={loading}
         >
-          {/* loading ? 'Đang đăng ký...' :  */ "Đăng ký"}
+          {loading ? "Đang đăng ký..." : "Đăng ký"}
         </Button>
 
         <Typography sx={{ textAlign: "center" }}>
           Đã có tài khoản?{" "}
-          <span>
-            <Link href="/signin/" variant="body2" sx={{ alignSelf: "center" }}>
-              Đăng nhập
-            </Link>
-          </span>
+          <Link href="/signin" variant="body2">
+            Đăng nhập
+          </Link>
         </Typography>
       </Box>
     </Card>
   );
-}
+};
 
 export default SignUpCard;
