@@ -99,7 +99,7 @@ public class PracticeService {
     return ResponseEntity.ok(practiceResponseDTOs);
   }
 
-  public ResponseEntity<List<PracticeQuizResponseDTO>> getPracticeDetail(String name, int id) {
+    public ResponseEntity<List<PracticeQuizResponseDTO>> getPracticeDetail(String name, int id) {
     User user = userRepository.findByEmail(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     QuizSetAttempt quizSetAttempt = quizSetAttemptRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quiz set attempt not found"));
 

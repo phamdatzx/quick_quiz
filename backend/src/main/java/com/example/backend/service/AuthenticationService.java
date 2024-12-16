@@ -5,6 +5,7 @@ import com.example.backend.DTO.Auth.AuthenticationResponse;
 import com.example.backend.DTO.Auth.RegisterRequest;
 import com.example.backend.entity.Role;
 import com.example.backend.entity.User;
+import com.example.backend.exception.ValidationException;
 import com.example.backend.repository.UserRepository;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,21 @@ public class AuthenticationService {
 
   public AuthenticationResponse register(RegisterRequest request) {
 
-    //check if the user already exists
-    if(userRepository.findByEmail(request.getEmail()).isPresent()) {
-      throw new RuntimeException("User already exists");
+    // Validate email
+    if (!request.getEmail().contains("@")) {
+      throw new ValidationException("Invalid email format");
+    }
+    // Validate password
+    if (request.getPassword().length() <= 8 || !request.getPassword().matches(".*\\d.*") || !request.getPassword().matches(".*[a-zA-Z].*")) {
+      throw new ValidationException("Password must be more than 8 characters long and contain both numbers and letters");
+    }
+    // Validate name
+    if (request.getName().isEmpty()) {
+      throw new ValidationException("Name cannot be empty");
+    }
+    // Check if the user already exists
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+      throw new ValidationException("User already exists");
     }
 
     //create new user and save it to the database
@@ -90,4 +103,5 @@ public class AuthenticationService {
     }
 
   }
+
 }
