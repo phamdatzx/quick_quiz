@@ -25,6 +25,7 @@ const Home = () => {
   const [loadingSaved, setLoadingSaved] = useState(false);
   const [loadingRandom, setLoadingRandom] = useState(false);
   const [hasMoreMyQuizSets, setHasMoreMyQuizSets] = useState(true);
+const [bookmarkedQuizSetIds, setBookmarkedQuizSetIds] = useState(new Set());
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,6 +38,7 @@ const Home = () => {
       fetchMyQuizSets(1, newItemsPerPage);
       fetchSavedQuizSets();
       fetchRandomQuizSets(1, newItemsPerPage);
+      fetchBookmarkedQuizSets();
     };
 
     window.addEventListener("resize", handleResize);
@@ -91,8 +93,18 @@ const Home = () => {
       setLoadingSaved(false);
     }
   };
+  const fetchBookmarkedQuizSets = async () => {
+      try {
+        const bookmarkedQuizSets = await quizSetService.getBookmarkedQuizSets();
+        const bookmarkedIds = new Set(bookmarkedQuizSets.map((quizSet) => quizSet.id));
+        setBookmarkedQuizSetIds(bookmarkedIds);
+      } catch (error) {
+        console.error("Error fetching bookmarked quiz sets:", error);
+      }
+    };
 
   useEffect(() => {
+    fetchBookmarkedQuizSets();
     fetchMyQuizSets(myPage, itemsPerPage);
     fetchSavedQuizSets();
     fetchRandomQuizSets(randomPage, itemsPerPage);
@@ -171,6 +183,7 @@ const Home = () => {
                 title={quizSet.name}
                 description={quizSet.description}
                 quizId={quizSet.id}
+                isInitiallyBookmarked={bookmarkedQuizSetIds.has(quizSet.id)}
               />
             ))
           )}
@@ -222,6 +235,7 @@ const Home = () => {
                 title={quizSet.name}
                 description={quizSet.description}
                 quizId={quizSet.id}
+                isInitiallyBookmarked={bookmarkedQuizSetIds.has(quizSet.id)}
               />
             ))
           )}
@@ -273,6 +287,7 @@ const Home = () => {
                 title={quizSet.name}
                 description={quizSet.description}
                 quizId={quizSet.id}
+                isInitiallyBookmarked={bookmarkedQuizSetIds.has(quizSet.id)}
               />
             ))
           )}

@@ -6,6 +6,7 @@ export const userLogin = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await authService.login({ email, password });
+      console.log(response);
       return response; 
     } catch (error) {
       return rejectWithValue(
@@ -34,6 +35,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     token: null,
+    role: null,
     isAuthenticated: null,
     loading: false,
     error: null,
@@ -42,8 +44,10 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
+      state.role = null;
       state.isAuthenticated = false;
       localStorage.removeItem('token'); 
+      localStorage.removeItem('role');
     },
     setAuthenticated(state, action) {
       state.isAuthenticated = action.payload;
@@ -60,8 +64,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.role = action.payload.role;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token); // Lưu token
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('role', action.payload.role);
       })
       .addCase(userLogin.rejected, (state, action) => {
         state.loading = false;
@@ -78,8 +84,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.role = action.payload.role;
         state.isAuthenticated = true; 
         localStorage.setItem('token', action.payload.token); 
+        localStorage.setItem('role', action.payload.role);
       })
       .addCase(userRegister.rejected, (state, action) => {
         state.loading = false;
