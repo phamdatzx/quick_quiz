@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   TextField,
@@ -7,26 +7,52 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Pagination,
   Grid,
   IconButton,
 } from "@mui/material";
 import TopicPreview from "./TopicPreview";
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import topicService from "../../services/topicService";
 
 const Topic = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("recent");
   const [page, setPage] = useState(1);
+  const [topics, setTopics] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMoreTopics, setHasMoreTopics] = useState(true);
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
-  const topics = [
-    { title: "Mathematics", description: "Learn about algebra, geometry, and more.", topicId: 1 },
-    { title: "History", description: "Dive into ancient and modern history.", topicId: 2 },
-    { title: "Science", description: "Explore physics, chemistry, and biology.", topicId: 3 },
-    // Add more topics here...
-  ];
+  const fetchTopics = async () => {
+    setLoading(true);
+    try {
+      const response = await topicService.getTopics({
+        search: searchTerm || "",
+        sort: sortOption,
+        page, // No need to subtract 1 since API starts from page 1
+        limit: itemsPerPage,
+      });
+
+      if (response.topics.length > 0) {
+        setTopics(response.topics);
+        setHasMoreTopics(response.topics.length === itemsPerPage);
+      } else {
+        setTopics([]);
+        setHasMoreTopics(false);
+        if (page > 1) setPage(page - 1); // Prevent staying on an empty page
+      }
+    } catch (error) {
+      console.error("Failed to fetch topics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTopics();
+  }, [searchTerm, sortOption, page]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -36,28 +62,10 @@ const Topic = () => {
     setSortOption(event.target.value);
   };
 
-  const handlePageChange = (event, value) => {
-    setPage(value);
+  const handlePageChange = (direction) => {
+    if (direction === "next" && hasMoreTopics) setPage(page + 1);
+    if (direction === "prev" && page > 1) setPage(page - 1);
   };
-
-  const filterAndSortTopics = (topics) => {
-    return topics
-      .filter((topic) => topic.title.toLowerCase().includes(searchTerm.toLowerCase()))
-      .sort((a, b) => {
-        if (sortOption === "recent") return b.topicId - a.topicId;
-        if (sortOption === "alphabetical") return a.title.localeCompare(b.title);
-        return 0;
-      });
-  };
-
-  const paginatedTopics = (topics) => {
-    const startIndex = (page - 1) * itemsPerPage;
-    return topics.slice(startIndex, startIndex + itemsPerPage);
-  };
-
-  const filteredTopics = filterAndSortTopics(topics);
-  const displayedTopics = paginatedTopics(filteredTopics);
-  const pageCount = Math.ceil(filteredTopics.length / itemsPerPage);
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -69,14 +77,10 @@ const Topic = () => {
           marginBottom: 3,
         }}
       >
-        <Typography variant="h4">
-          Các bộ câu hỏi
-        </Typography>
-        <IconButton href="/createtopic" sx={{}}>
+        <Typography variant="h4">Các chủ đề</Typography>
+        <IconButton href="/createtopic">
           <CreateNewFolderIcon />
-          <Typography variant="subtitle1">
-            Tạo bộ câu hỏi
-          </Typography>
+          <Typography variant="subtitle1">Tạo chủ đề</Typography>
         </IconButton>
       </Box>
 
@@ -94,32 +98,55 @@ const Topic = () => {
           variant="outlined"
           value={searchTerm}
           onChange={handleSearchChange}
-          sx={{ width: "100%" }}
+          sx={{ width: "60%" }}
         />
+        <FormControl sx={{ width: "35%" }}>
+          <InputLabel>Sắp xếp theo</InputLabel>
+          <Select value={sortOption} onChange={handleSortChange}>
+            <MenuItem value="recent">Mới nhất</MenuItem>
+            <MenuItem value="alphabetical">Theo bảng chữ cái</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
+      {/* Loading State */}
+      {loading && <Typography variant="h6">Đang tải...</Typography>}
+
+      {/* Topics Display */}
       <Grid container spacing={2}>
-        {displayedTopics.map((topic) => (
-          <Grid item xs={12} key={topic.topicId}>
+        {topics.map((topic) => (
+          <Grid item xs={12} key={topic.id}>
             <TopicPreview
-              title={topic.title}
+              title={topic.name}
               description={topic.description}
-              topicId={topic.topicId}
+              topicId={topic.id}
             />
           </Grid>
         ))}
       </Grid>
 
-      {/* Pagination */}
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-        <Pagination
-          count={pageCount}
-          page={page}
-          onChange={handlePageChange}
-          color="primary"
-        />
+      {/* Pagination Controls */}
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}>
+        <IconButton
+          onClick={() => handlePageChange("prev")}
+          disabled={page === 1}
+        >
+          <ArrowBack />
+        </IconButton>
+
+        <Typography sx={{ alignSelf: "center", marginX: 2 }}>
+          Trang {page}
+        </Typography>
+
+        <IconButton
+          onClick={() => handlePageChange("next")}
+          disabled={!hasMoreTopics}
+        >
+          <ArrowForward />
+        </IconButton>
       </Box>
     </Box>
   );
 };
+
 export default Topic;

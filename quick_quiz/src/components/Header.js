@@ -8,11 +8,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Avatar, IconButton } from "@mui/material";
+import { logout } from "../stores/authSlice";
+import { useDispatch } from "react-redux";
 
 export default function Header() {
   const [elevated, setElevated] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const isMobile = useMediaQuery("(max-width:1150px)");
+  const dispatch = useDispatch();
 
   const handleScroll = () => {
     if (window.scrollY > 0) {
@@ -36,6 +39,11 @@ export default function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleLogout = () => {
+    dispatch(logout()); 
+    handleClose();
+  };
+
   return (
     <AppBar
       position="sticky"
@@ -93,7 +101,7 @@ export default function Header() {
           }}
         >
           <MenuItem onClick={handleClose}>Tài khoản</MenuItem>
-          <MenuItem onClick={handleClose}>Đăng xuất</MenuItem>
+          <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
         </Menu>
       </Box>
     </AppBar>

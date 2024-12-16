@@ -5,17 +5,37 @@ import {
     CardActionArea,
     CardContent,
     Chip,
+    IconButton,
     Typography,
   } from "@mui/material";
-  import React from "react";
-  import { useNavigate } from "react-router-dom";
+  import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import quizSetService from "../../services/quizSetService";
   
-  const QuizSetPreview = ({ title, questionCount, quizId }) => {
-  
+  const QuizSetPreview = ({ title, description, quizId,isInitiallyBookmarked }) => {
+    const [isBookmarked, setIsBookmarked] = useState(isInitiallyBookmarked);
+
     const navigate = useNavigate();
     const handleClick = () => {
       navigate(`/quizsetview/${quizId}`);
+      
     };
+
+    const handleBookmark = async () => {
+      try {
+        if (isBookmarked) {
+          await quizSetService.unbookmarkQuizSet(quizId); 
+        } else {
+          await quizSetService.bookmarkQuizSet(quizId); 
+        }
+        setIsBookmarked((prev) => !prev); 
+      } catch (error) {
+        console.error("Error updating bookmark status:", error);
+      }
+    };
+
     return (
       <Card
         sx={{
@@ -33,25 +53,41 @@ import {
           disableRipple
           onClick={handleClick}
           sx={{
-            height: "100%",
-            width: "100%",
           }}
         >
           <CardContent
             sx={{
               height: "100%",
-              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <Typography
-              variant="subtitle1"
-              sx={{
-                paddingBottom: 1,
+            <Box sx={{ maxWidth: "80%" }}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  paddingBottom: 1,
+                }}
+              >
+                {title}
+              </Typography>
+              <Chip
+                label={description}
+                sx={{
+                  maxWidth: "100%",
+                }}
+              />
+            </Box>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation(); 
+                handleBookmark();
               }}
+              sx={{ marginLeft: 1 }}
             >
-              {title}
-            </Typography>
-            <Chip label={questionCount + " Câu hỏi"} sx={{}}></Chip>
+              {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            </IconButton>
           </CardContent>
         </CardActionArea>
       </Card>
