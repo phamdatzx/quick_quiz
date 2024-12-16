@@ -2,32 +2,32 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import quizSetService from "../../services/quizSetService";
+import practiceService from "../../services/practiceService";
 
-const Result = () => {
+const HistoryDetail = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { quizzes = [], userAnswers = [], quizId, submitTime } = location.state || {};
+    const navigate = useNavigate();
+    const [quizzes, setQuizzes] = useState([]);
+  const { data } = location.state || {};
 
   const [quizOverview, setQuizOverview] = useState(null);
-  const correctCount = quizzes.reduce(
-    (count, quiz, index) =>
-      userAnswers[index] === quiz.correctAnswer ? count + 1 : count,
-    0
-  );
-  console.log(quizId);
+  
 
   useEffect(() => {
       const fetchQuizOverview = async () => {
         try {
-          const overview = await quizSetService.getQuizSetById(quizId);
-          setQuizOverview(overview);
+          const overview = await quizSetService.getQuizSetById(data.quizSet.id);
+            setQuizOverview(overview);
+            
+            const detail = await practiceService.getDetailPracticeAttempt(data.id);
+            setQuizzes(detail);
         } catch (err) {
           console.error();
         } 
       };
   
       fetchQuizOverview();
-    }, [quizId]);
+    }, [data]);
 
   return (
     <Box sx={{
@@ -59,7 +59,7 @@ const Result = () => {
               {quizOverview.description}
             </Typography>
             <Typography variant="body1" gutterBottom sx={{ color: "#fff" }}>
-              Hoàn thành vào lúc: {submitTime}
+              Hoàn thành vào lúc: {data.practiceTime}
             </Typography>
           </Box>)}
       </Box>
@@ -83,7 +83,7 @@ const Result = () => {
           Kết quả làm bài
         </Typography>
         <Typography sx={{ mt: 1, color: "#fff" }}>
-          Bạn đã trả lời đúng {correctCount}/{quizzes.length} câu.
+          Bạn đã trả lời đúng {data.numberOfCorrectAnswers}/{quizzes.length} câu.
         </Typography>
       </Box>
 
@@ -126,8 +126,7 @@ const Result = () => {
             }}>
               {quiz.answers && Array.isArray(quiz.answers) && quiz.answers.map((answer, choiceIndex) => {
                 // Kiểm tra đáp án đúng và đáp án người dùng đã chọn
-                const isCorrect = answer === quiz.correctAnswer;
-                const isSelected = answer === userAnswers[index];
+                const isSelected = answer === quiz.chooseAnswer;
 
                 return (
                   <Box
@@ -138,12 +137,10 @@ const Result = () => {
                       alignItems: "center",
                       p: 1,
                       borderRadius: 2,
-                      backgroundColor: isCorrect
-                        ? "#6FD181" // Màu xanh nếu đúng
-                        : isSelected
-                        ? "#A70F0F" // Màu đỏ nếu chọn sai
-                        : "#f0f0f0", // Màu xám nếu chưa chọn
-                      boxShadow: isCorrect || isSelected
+                      backgroundColor: isSelected
+                        ? "#1935CA" 
+                        : "#f0f0f0", 
+                      boxShadow: isSelected
                         ? "0px 4px 6px rgba(0, 0, 0, 0.2)"
                         : "none",
                     }}
@@ -151,7 +148,7 @@ const Result = () => {
                     <Typography
                       sx={{
                         textWrap:'balance',
-                        color: isCorrect || isSelected ? "#fff" : "#000",
+                        color: isSelected ? "#fff" : "#000",
                       }}
                     >
                       {answer}
@@ -171,12 +168,12 @@ const Result = () => {
       <Button
         variant="contained"
         sx={{ mt: 2, height: "10vh", width: "60vw" }}
-        onClick={() => navigate("/home")}
+        onClick={() => navigate("/history")}
       >
-        Trở về màn hình chính
+        Trở về
       </Button>
     </Box>
   );
 };
 
-export default Result;
+export default HistoryDetail;

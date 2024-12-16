@@ -4,73 +4,122 @@ import {
   Typography,
   Grid,
   Pagination,
+  CircularProgress,
+  IconButton,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import QuizSetPreview from "../quizset/QuizSetPreview";
+import quizSetService from "../../services/quizSetService";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const TopicView = () => {
-  const { topicId } = useParams();
+  const { topicId } = useParams(); 
+  const navigate = useNavigate();
   const [quizSets, setQuizSets] = useState([]);
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const [page, setPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1); 
+  const [loading, setLoading] = useState(false); 
+  const [bookmarkedQuizSetIds, setBookmarkedQuizSetIds] = useState(new Set());
 
-  // Fetch quiz sets based on topicId (mocked data for now)
+  const itemsPerPage = 10; 
+
+
   useEffect(() => {
-    // Replace with actual API call to fetch quiz sets for the topicId
     const fetchQuizSets = async () => {
-      const mockQuizSets = [
-        { title: "Algebra Basics", questionCount: 20, quizId: 1 },
-        { title: "World War II", questionCount: 15, quizId: 2 },
-        { title: "Physics Fundamentals", questionCount: 10, quizId: 3 },
-        { title: "Organic Chemistry", questionCount: 25, quizId: 4 },
-        { title: "JavaScript Essentials", questionCount: 30, quizId: 5 },
-        // Add more mock data...
-      ];
-      setQuizSets(mockQuizSets);
+      if (!topicId) {
+        console.error("Topic ID is missing.");
+        return;
+      }
+  
+      try {
+        const data = await quizSetService.getQuizSetsByTopic({
+          topicId, 
+          page: page - 1, 
+          limit: itemsPerPage,
+
+        });
+  
+        setQuizSets(data.quizSets || []);
+        setTotalPages(Math.ceil(data.totalElements / itemsPerPage)); 
+      } catch (error) {
+        console.error("Error fetching quiz sets:", error);
+      }
+    };
+  
+    fetchQuizSets();
+  }, [topicId, page]);
+
+  useEffect(() => {
+    const fetchBookmarkedQuizSets = async () => {
+      try {
+        const bookmarkedQuizSets = await quizSetService.getBookmarkedQuizSets();
+        const bookmarkedIds = new Set(bookmarkedQuizSets.map((quizSet) => quizSet.id));
+        setBookmarkedQuizSetIds(bookmarkedIds);
+      } catch (error) {
+        console.error("Error fetching bookmarked quiz sets:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchQuizSets();
-  }, [topicId]);
+    fetchBookmarkedQuizSets();
+  }, []);
 
   const handlePageChange = (event, value) => {
-    setPage(value);
+    setPage(value); 
   };
 
-  const paginatedQuizSets = () => {
-    const startIndex = (page - 1) * itemsPerPage;
-    return quizSets.slice(startIndex, startIndex + itemsPerPage);
+  const handleCreateQuizSet = () => {
+    navigate(`/Createquizset?topicId=${topicId}`);
   };
-
-  const displayedQuizSets = paginatedQuizSets();
-  const pageCount = Math.ceil(quizSets.length / itemsPerPage);
 
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Danh sách bộ câu hỏi của chủ đề 
+        Danh sách bộ câu hỏi của chủ đề
       </Typography>
 
-      <Grid container spacing={2}>
-        {displayedQuizSets.map((quizSet) => (
-          <Grid item xs={12} key={quizSet.quizId}>
-            <QuizSetPreview
-              title={quizSet.title}
-              questionCount={quizSet.questionCount}
-              quizId={quizSet.quizId}
-            />
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Pagination */}
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-        <Pagination
-          count={pageCount}
-          page={page}
-          onChange={handlePageChange}
+      <Box sx={{ my: 2, textAlign: "left" }}>
+        <IconButton
           color="primary"
-        />
+          onClick={handleCreateQuizSet}
+          sx={{ fontSize: 30 }}
+        >
+          <AddCircleIcon />
+          <Typography variant="subtitle1" sx={{mx:1}}> Tạo thêm bộ câu hỏi</Typography>
+        </IconButton>
       </Box>
+
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+          <CircularProgress /> {/* Hiển thị spinner khi loading */}
+        </Box>
+      ) : (
+        <>
+          <Grid container spacing={2}>
+            {quizSets.map((quizSet) => (
+              <Grid item xs={12} key={quizSet.id}>
+                <QuizSetPreview
+                  title={quizSet.name}
+                  description={quizSet.description || "Không có mô tả"}
+                  quizId={quizSet.id}
+                  isInitiallyBookmarked={bookmarkedQuizSetIds.has(quizSet.id)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+
+          {/* Pagination */}
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+              color="primary"
+            />
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

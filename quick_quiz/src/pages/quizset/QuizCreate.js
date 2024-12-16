@@ -13,19 +13,26 @@ import {
   Typography,
 } from "@mui/material";
 import topicService from "../../services/topicService";
+import quizService from "../../services/quizService";
+import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 function QuizCreate() {
+  const location = useLocation(); // Hook để lấy query params
+  const queryParams = new URLSearchParams(location.search);
+  const defaultTopicId = queryParams.get("topicId"); 
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [topics, setTopics] = useState([]); // Store the fetched topics
-  const [selectedTopic, setSelectedTopic] = useState("");
+  const [topics, setTopics] = useState([]); 
+  const [selectedTopic, setSelectedTopic] = useState(defaultTopicId || "");
 
   useEffect(() => {
-    console.log("API URL:", process.env.REACT_APP_API_URL);
+    
     const fetchTopics = async () => {
       try {
-        const response = await topicService.getTopics();
+        const response = await topicService.getTopics({page:"",limit:""});
         setTopics(response.topics);
       } catch (error) {
         console.error("Failed to fetch topics", error);
@@ -54,18 +61,43 @@ function QuizCreate() {
   };
 
   const handleCreate = async () => {
+    if (!selectedTopic || !title || questions.length === 0) {
+      toast.error("Vui lòng điền đầy đủ thông tin trước khi tạo bộ câu hỏi.");
+      return;
+    }
+  
+    const requestBodyForQuizSet = {
+      topicId: Number(selectedTopic),
+      name: title,
+      description: description,
+    };
+  
     try {
-      // await axios.post("/api/quizzes", { title, description, topic: selectedTopic, questions });
-      alert("Quiz created successfully!");
+      const response = await quizService.createQuizSet(requestBodyForQuizSet);
+      const createdTopicId = response.id; 
+      console.log("Quiz set created successfully:", response);
+  
+      const requestBodyForQuiz = questions.map((q) => ({
+        content: q.question,
+        answers: q.options,
+        type: "SINGLE_CHOICE",
+        correctAnswer: q.correctAnswer,
+      }));
+  
+      await quizService.createQuiz(createdTopicId, requestBodyForQuiz);
+  
+      toast.success("Bộ câu hỏi được tạo thành công!");
       setTitle("");
       setDescription("");
       setSelectedTopic("");
       setQuestions([]);
     } catch (error) {
-      alert("Failed to create quiz!");
+      console.error("Error creating quiz set or quiz:", error);
+      toast.error("Tạo bộ câu hỏi thất bại! Vui lòng thử lại.");
     }
   };
-
+  
+  
   return (
     <Box
       sx={{

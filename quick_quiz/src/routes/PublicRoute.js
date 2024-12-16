@@ -1,21 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Navigate } from "react-router-dom";
 
-const PublicRoute = ({ children }) => {
-//   const { isAuthenticated } = useSelector((state) => state.auth);
-//   const { user } = useSelector((state) => state.user);
-//   const role = user?.role;
-
-//   if (isAuthenticated) {
-//     if (role === 'user') {
-//       return <Navigate to="/user/create-notarization-profile" replace />;
-//     } else if (role === 'admin') {
-//       return <Navigate to="/admin/dashboard" replace />;
-//     }
-//   }
-
-  return children;
+const PublicRoute = ({ children, isAuthenticated }) => {
+  return isAuthenticated ? <Navigate to="/home" /> : children;
 };
 
 export default PublicRoute;
