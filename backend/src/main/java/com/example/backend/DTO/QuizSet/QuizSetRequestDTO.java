@@ -10,7 +10,7 @@ public class QuizSetRequestDTO {
 
   private String description;
 
-  private Boolean allowShowAnswer;
+  private Boolean allowShowAnswer=true;
 
   private int topicId;
 }

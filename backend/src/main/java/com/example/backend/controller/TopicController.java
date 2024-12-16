@@ -46,4 +46,9 @@ public class TopicController {
       @RequestParam(defaultValue = "10") int limit) {
     return topicService.getAllTopics(principal.getName(), page, limit);
   }
+
+  @GetMapping("/topic/{id}")
+  public ResponseEntity<TopicDTO> getTopicById(Principal principal,@PathVariable int id) {
+    return topicService.getTopicById(principal.getName(),id);
+  }
 }
