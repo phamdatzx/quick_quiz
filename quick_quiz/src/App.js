@@ -2,6 +2,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Box, ThemeProvider } from "@mui/material";
+import 'react-toastify/dist/ReactToastify.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import { BrowserRouter } from 'react-router-dom';
 import PrivateRoute from "./routes/PrivateRoute";
@@ -19,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuthenticated } from "./stores/authSlice";
 import NotFound from "./pages/notfound/NotFound";
 import HistoryDetail from "./pages/history/HistoryDetail";
+import { ToastContainer } from "react-toastify";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -52,7 +54,8 @@ function App() {
             </Box>
           </div>} >
         <ThemeProvider theme={theme}>
-          <Box display={"flex"} sx={{height:'100%', backgroundColor:'#FBF9F9'}}>
+          <Box display={"flex"} sx={{ height: '100%', backgroundColor: '#FBF9F9' }}>
+          <ToastContainer />
             {isAuthenticated && <Sidebar />}
             <Box flex={1}>
               {isAuthenticated && <Header />}

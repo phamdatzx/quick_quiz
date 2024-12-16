@@ -38,7 +38,7 @@ const QuizSetView = () => {
         const overview = await quizSetService.getQuizSetById(quizId);
         setQuizOverview(overview);
         
-        const topicList = await topicService.getTopics();
+        const topicList = await topicService.getTopics({page:"", limit:""});
         setTopicList(topicList.topics);
 
         const quizzes = await quizSetService.getQuizzesByQuizSetId(quizId);

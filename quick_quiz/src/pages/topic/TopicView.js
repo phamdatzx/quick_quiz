@@ -5,13 +5,16 @@ import {
   Grid,
   Pagination,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import QuizSetPreview from "../quizset/QuizSetPreview";
 import quizSetService from "../../services/quizSetService";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const TopicView = () => {
   const { topicId } = useParams(); 
+  const navigate = useNavigate();
   const [quizSets, setQuizSets] = useState([]);
   const [page, setPage] = useState(1); 
   const [totalPages, setTotalPages] = useState(1); 
@@ -48,11 +51,26 @@ const TopicView = () => {
     setPage(value); 
   };
 
+  const handleCreateQuizSet = () => {
+    navigate(`/Createquizset?topicId=${topicId}`);
+  };
+
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
         Danh sách bộ câu hỏi của chủ đề
       </Typography>
+
+      <Box sx={{ my: 2, textAlign: "left" }}>
+        <IconButton
+          color="primary"
+          onClick={handleCreateQuizSet}
+          sx={{ fontSize: 30 }}
+        >
+          <AddCircleIcon />
+          <Typography variant="subtitle1" sx={{mx:1}}> Tạo thêm bộ câu hỏi</Typography>
+        </IconButton>
+      </Box>
 
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>

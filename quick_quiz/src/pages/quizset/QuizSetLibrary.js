@@ -28,7 +28,7 @@ const QuizSetLibrary = () => {
   const [loading, setLoading] = useState(false);
   const [hasMoreQuizSets, setHasMoreQuizSets] = useState(true);
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   const fetchQuizSets = async () => {
     setLoading(true);
