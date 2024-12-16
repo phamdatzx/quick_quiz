@@ -5,6 +5,7 @@ import com.example.backend.DTO.QuizSet.ListQuizSetDTO;
 import com.example.backend.DTO.QuizSet.QuizSetRequestDTO;
 import com.example.backend.DTO.QuizSet.QuizSetResponseDTO;
 import com.example.backend.entity.QuizSet;
+import com.example.backend.entity.Quiz;
 import com.example.backend.entity.User;
 import com.example.backend.exception.ConflictException;
 import com.example.backend.exception.ForbiddenException;
@@ -41,6 +42,9 @@ public class QuizSetServiceTest {
 
     @Mock
     private ModelMapper modelMapper;
+
+    @Mock
+    private QuizService quizService;
 
     @InjectMocks
     private QuizSetService quizSetService;
@@ -166,5 +170,117 @@ public class QuizSetServiceTest {
         assertNotNull(result);
         assertEquals(1, result.getQuizSets().size());
         assertEquals("Quiz Set 1", result.getQuizSets().get(0).getName());
+    }
+
+    @Test
+    public void testAddQuizToQuizSet_Success() {
+        String email = "user@example.com";
+        int id = 1;
+        QuizDTO quizDTO = new QuizDTO();
+
+        QuizSet quizSet = new QuizSet();
+        User creator = new User();
+        creator.setEmail(email);
+        quizSet.setCreator(creator);
+
+        when(quizSetRepository.findById(id)).thenReturn(Optional.of(quizSet));
+        when(quizService.saveQuiz(any(Quiz.class))).thenReturn(new Quiz());
+        when(modelMapper.map(any(QuizDTO.class), eq(Quiz.class))).thenReturn(new Quiz());
+        when(modelMapper.map(any(Quiz.class), eq(QuizDTO.class))).thenReturn(quizDTO);
+
+        ResponseEntity<QuizDTO> response = quizSetService.addQuizToQuizSet(email, id, quizDTO);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        verify(quizService, times(1)).saveQuiz(any(Quiz.class));
+    }
+
+    @Test
+    public void testAddMultipleQuizToQuizSet_Success() {
+        String email = "user@example.com";
+        int id = 1;
+        List<QuizDTO> quizDTOs = List.of(new QuizDTO(), new QuizDTO());
+
+        QuizSet quizSet = new QuizSet();
+        User creator = new User();
+        creator.setEmail(email);
+        quizSet.setCreator(creator);
+
+        when(quizSetRepository.findById(id)).thenReturn(Optional.of(quizSet));
+        when(modelMapper.map(any(QuizDTO.class), eq(Quiz.class))).thenReturn(new Quiz());
+        when(quizService.saveQuiz(any(Quiz.class))).thenReturn(new Quiz());
+        when(modelMapper.map(any(QuizSet.class), eq(QuizSetResponseDTO.class))).thenReturn(new QuizSetResponseDTO());
+
+        ResponseEntity<QuizSetResponseDTO> response = quizSetService.addMultipleQuizToQuizSet(email, id, quizDTOs);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        verify(quizService, times(2)).saveQuiz(any(Quiz.class));
+    }
+
+    @Test
+    public void testAllowShowAnswer_Success() {
+        String email = "user@example.com";
+        int id = 1;
+        QuizSet quizSet = new QuizSet();
+        User creator = new User();
+        creator.setEmail(email);
+        quizSet.setCreator(creator);
+
+        when(quizSetRepository.findById(id)).thenReturn(Optional.of(quizSet));
+        when(quizSetRepository.save(any(QuizSet.class))).thenReturn(quizSet);
+        when(modelMapper.map(any(QuizSet.class), eq(QuizSetResponseDTO.class))).thenReturn(new QuizSetResponseDTO());
+
+        ResponseEntity<QuizSetResponseDTO> response = quizSetService.allowShowAnswer(email, id);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(quizSet.getAllowShowAnswer());
+        verify(quizSetRepository, times(1)).save(quizSet);
+    }
+
+    @Test
+    public void testDisableShowAnswer_Success() {
+        String email = "user@example.com";
+        int id = 1;
+        QuizSet quizSet = new QuizSet();
+        User creator = new User();
+        creator.setEmail(email);
+        quizSet.setCreator(creator);
+
+        when(quizSetRepository.findById(id)).thenReturn(Optional.of(quizSet));
+        when(quizSetRepository.save(any(QuizSet.class))).thenReturn(quizSet);
+        when(modelMapper.map(any(QuizSet.class), eq(QuizSetResponseDTO.class))).thenReturn(new QuizSetResponseDTO());
+
+        ResponseEntity<QuizSetResponseDTO> response = quizSetService.disableShowAnswer(email, id);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertFalse(quizSet.getAllowShowAnswer());
+        verify(quizSetRepository, times(1)).save(quizSet);
+    }
+
+    @Test
+    public void testGetRandomQuizSet_Success() {
+        int limit = 2;
+        QuizSet quizSet1 = new QuizSet();
+        quizSet1.setName("Quiz Set 1");
+
+        QuizSet quizSet2 = new QuizSet();
+        quizSet2.setName("Quiz Set 2");
+
+        List<QuizSet> quizSets = List.of(quizSet1, quizSet2);
+        Page<QuizSet> quizSetPage = new PageImpl<>(quizSets);
+
+        when(quizSetRepository.count()).thenReturn(10L);
+        when(quizSetRepository.findAll(any(PageRequest.class))).thenReturn(quizSetPage);
+        when(modelMapper.map(any(QuizSet.class), eq(QuizSetResponseDTO.class)))
+                .thenReturn(new QuizSetResponseDTO());
+
+        ListQuizSetDTO result = quizSetService.getRandomQuizSet(limit);
+
+        assertNotNull(result);
+        assertEquals(2, result.getQuizSets().size());
+        verify(quizSetRepository, times(1)).findAll(any(PageRequest.class));
     }
 }
