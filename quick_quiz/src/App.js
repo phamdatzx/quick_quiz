@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Box, ThemeProvider } from "@mui/material";
 import 'react-toastify/dist/ReactToastify.css';
@@ -21,6 +21,7 @@ import { setAuthenticated } from "./stores/authSlice";
 import NotFound from "./pages/notfound/NotFound";
 import HistoryDetail from "./pages/history/HistoryDetail";
 import { ToastContainer } from "react-toastify";
+import Report from "./pages/report/Report";
 
 
 const Sidebar = lazy(() => import("./components/Sidebar"));
@@ -35,7 +36,8 @@ const Test = lazy(() => import("./pages/quizset/QuizSetCard"));
 
 function App() {
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const role = localStorage.getItem('role');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -79,7 +81,9 @@ function App() {
                 <Route path="/historydetail"  element={<PrivateRoute isAuthenticated={isAuthenticated}><HistoryDetail /></PrivateRoute>} />
                 <Route path="/topic/:topicId" element={<PrivateRoute isAuthenticated={isAuthenticated}><TopicView /></PrivateRoute>} />
                 <Route path="/test" element={<PrivateRoute isAuthenticated={isAuthenticated}><Test /></PrivateRoute>} />
-
+                {role === 'ADMIN' && <Route path="/report" element={<PrivateRoute isAuthenticated={isAuthenticated}><Report /></PrivateRoute>} />}
+                
+                <Route path="/" element={<Navigate to="/home"/>}/>
                 <Route path="*" element={<NotFound/> } />
               </Routes>
             </Box>

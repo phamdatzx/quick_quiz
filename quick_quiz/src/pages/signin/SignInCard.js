@@ -42,26 +42,31 @@ const SignInCard = () => {
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
-  // Validate input fields
   const validateInputs = () => {
     let isValid = true;
-
+  
+    // Kiểm tra email
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError('Vui lòng nhập địa chỉ email hợp lệ.');
       isValid = false;
     } else {
       setEmailError('');
     }
-
+  
+    // Kiểm tra mật khẩu
     if (!password || password.length < 6) {
       setPasswordError('Mật khẩu phải có ít nhất 6 ký tự.');
+      isValid = false;
+    } else if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+      setPasswordError('Mật khẩu phải chứa ít nhất một chữ cái và một số.');
       isValid = false;
     } else {
       setPasswordError('');
     }
-
+  
     return isValid;
   };
+  
 
   const handleSignIn = async (e) => {
     e.preventDefault();

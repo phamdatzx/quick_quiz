@@ -15,26 +15,31 @@ import KeyboardDoubleArrowLeftRoundedIcon from "@mui/icons-material/KeyboardDoub
 import KeyboardDoubleArrowRightRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 import SidebarItem from "./SideBarItem";
+import { useSelector } from "react-redux";
 export default function Sidebar() {
   const [openSideBar, setOpenSideBar] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const role = localStorage.getItem('role');
+
 
   const handleSelectMenu = (menu) => {
     setSelectedMenu(menu.type);
     navigate(menu.href);
   };
+  useEffect(() => {
+    console.log(role);
+    console.log(typeof (role));
+  },[]);
 
   const renderSidebarItems = useCallback(() => {
     const items = [];
 
-    // if (role === 'user')
-    // This function is for rendering sidebar corresponding to user role
-    // Yet we currently have 1 role
     items.push(
       {
         type: "home",
@@ -62,6 +67,18 @@ export default function Sidebar() {
       },
       
     );
+    if (role === "ADMIN") {
+      items.push(
+        
+          {
+            type: "report",
+            icon: <SummarizeIcon />,
+            title: "Danh sách báo cáo",
+            href: "/report",
+          },
+        
+      )
+    }
 
     return items;
   }, []);

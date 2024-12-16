@@ -15,7 +15,7 @@ const QuizSetView = () => {
   const navigate = useNavigate();
   const [quizOverview, setQuizOverview] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [topicList, setTopicList] = useState([]);
+  const [topic, setTopic] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -27,10 +27,7 @@ const QuizSetView = () => {
     }).format(date);
   };
 
-  const getTopicNameById = (topics, id) => {
-    const topic = topics.find((topic) => topic.id === id);
-    return topic ? topic.name : "Topic not found";
-  };
+  
 
   useEffect(() => {
     const fetchQuizData = async () => {
@@ -38,9 +35,15 @@ const QuizSetView = () => {
         const overview = await quizSetService.getQuizSetById(quizId);
         setQuizOverview(overview);
         
-        const topicList = await topicService.getTopics({page:"", limit:""});
-        setTopicList(topicList.topics);
-
+        console.log(overview);
+        try {
+          const topicData = await topicService.getTopicById(overview.topicId);
+          setTopic(topicData);
+          console.log(topicData);
+        } catch (error) {
+          setError(error.message);
+        }
+        
         const quizzes = await quizSetService.getQuizzesByQuizSetId(quizId);
         setQuestions(quizzes);
       } catch (err) {
@@ -80,9 +83,11 @@ const QuizSetView = () => {
       {/* Hiển thị thông tin overview */}
       {quizOverview && (
         <>
-          <Typography variant="h4" gutterBottom>
-            Chủ đề: {getTopicNameById(topicList,quizOverview.topicId)}
-          </Typography>
+          {quizOverview && topic && topic.name && (
+  <Typography variant="h4" gutterBottom>
+    Chủ đề: {topic.name}
+  </Typography>
+)}
           <Typography variant="h4" gutterBottom>
             Bộ câu hỏi: {quizOverview.name}
           </Typography>
