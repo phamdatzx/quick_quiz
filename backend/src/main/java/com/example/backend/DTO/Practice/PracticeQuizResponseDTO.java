@@ -18,5 +18,7 @@ public class PracticeQuizResponseDTO {
 
   List<String> answers;
 
+  String correctAnswer;
+
   String chooseAnswer;
 }
