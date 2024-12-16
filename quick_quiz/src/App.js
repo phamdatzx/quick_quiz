@@ -54,7 +54,7 @@ function App() {
             </Box>
           </div>} >
         <ThemeProvider theme={theme}>
-          <Box display={"flex"} sx={{ height: '100%', backgroundColor: '#FBF9F9' }}>
+          <Box display={"flex"} sx={{ minHeight: '100vh',minWidth:'100vw', backgroundColor: '#FBF9F9' }}>
           <ToastContainer />
             {isAuthenticated && <Sidebar />}
             <Box flex={1}>

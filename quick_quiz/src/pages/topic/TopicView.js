@@ -19,6 +19,8 @@ const TopicView = () => {
   const [page, setPage] = useState(1); 
   const [totalPages, setTotalPages] = useState(1); 
   const [loading, setLoading] = useState(false); 
+  const [bookmarkedQuizSetIds, setBookmarkedQuizSetIds] = useState(new Set());
+
   const itemsPerPage = 10; 
 
 
@@ -46,6 +48,22 @@ const TopicView = () => {
   
     fetchQuizSets();
   }, [topicId, page]);
+
+  useEffect(() => {
+    const fetchBookmarkedQuizSets = async () => {
+      try {
+        const bookmarkedQuizSets = await quizSetService.getBookmarkedQuizSets();
+        const bookmarkedIds = new Set(bookmarkedQuizSets.map((quizSet) => quizSet.id));
+        setBookmarkedQuizSetIds(bookmarkedIds);
+      } catch (error) {
+        console.error("Error fetching bookmarked quiz sets:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookmarkedQuizSets();
+  }, []);
 
   const handlePageChange = (event, value) => {
     setPage(value); 
@@ -85,6 +103,7 @@ const TopicView = () => {
                   title={quizSet.name}
                   description={quizSet.description || "Không có mô tả"}
                   quizId={quizSet.id}
+                  isInitiallyBookmarked={bookmarkedQuizSetIds.has(quizSet.id)}
                 />
               </Grid>
             ))}

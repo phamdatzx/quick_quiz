@@ -54,12 +54,55 @@ const getQuizzesByQuizSetId = async (quizSetId) => {
   const createQuizSet = async (quizSetData) => {
     const response = await axiosConfig.post('/quiz-set', quizSetData);
     return response.data;
-  };
+};
   
+const bookmarkQuizSet = async (quizId) => {
+  try {
+    const response = await axiosConfig.post(`/quiz-set/${quizId}/bookmark`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to bookmark quiz set:", error);
+    throw error;
+  }
+};
+
+const unbookmarkQuizSet = async (quizId) => {
+  try {
+    const response = await axiosConfig.delete(`/quiz-set/${quizId}/bookmark`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to unbookmark quiz set:", error);
+    throw error;
+  }
+};
+
+const getBookmarkedQuizSets = async () => {
+  try {
+    const response = await axiosConfig.get(`/quiz-set/bookmarks`);
+    return response.data.quizSets;
+  } catch (error) {
+    console.error("Failed to unbookmark quiz set:", error);
+    throw error;
+  }
+};
+  
+const getRandomQuizSets = async () => {
+  try {
+    const response = await axiosConfig.get(`/quiz-set/random?limit=19`);
+    return response.data.quizSets;
+  } catch (error) {
+    console.error("Failed to get quiz set:", error);
+    throw error;
+  }
+};
 export default {
   getQuizSetsByTopic,
   getQuizSetById,
   getAllQuizSets,
   getQuizzesByQuizSetId,
-    createQuizSet,
+  createQuizSet,
+  bookmarkQuizSet,
+  unbookmarkQuizSet,
+  getBookmarkedQuizSets,
+    getRandomQuizSets,
   };
