@@ -52,12 +52,12 @@ const SignUpCard = () => {
 
   const validateInputs = () => {
     let isValid = true;
-
+  
     if (!name || !email || !password || !confirmPassword) {
       toast.error("Vui lòng điền đầy đủ thông tin!");
       isValid = false;
     }
-
+  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setEmailError("Vui lòng nhập email hợp lệ!");
@@ -65,9 +65,12 @@ const SignUpCard = () => {
     } else {
       setEmailError("");
     }
-
-    if (password.length < 6) {
-      setPasswordError("Mật khẩu phải có ít nhất 6 ký tự!");
+  
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{6,}$/; // Ít nhất 6 ký tự, gồm chữ cái và số
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        "Mật khẩu phải có ít nhất 6 ký tự và bao gồm cả chữ cái và số!"
+      );
       isValid = false;
     } else if (password !== confirmPassword) {
       setPasswordError("Mật khẩu không khớp!");
@@ -75,9 +78,10 @@ const SignUpCard = () => {
     } else {
       setPasswordError("");
     }
-
+  
     return isValid;
   };
+  
 
   const handleSignUp = async (e) => {
     e.preventDefault();

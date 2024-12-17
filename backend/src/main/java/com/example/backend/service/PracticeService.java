@@ -105,6 +105,7 @@ public class PracticeService {
 
     List<PracticeQuizResponseDTO> practiceQuizResponseDTOs = quizSetAttempt.getAttemptDetails().stream().map(attemptDetail -> {
       PracticeQuizResponseDTO practiceQuizResponseDTO = new PracticeQuizResponseDTO();
+      practiceQuizResponseDTO.setCorrectAnswer(attemptDetail.getQuiz().getCorrectAnswer());
       practiceQuizResponseDTO.setQuizId(attemptDetail.getQuiz().getId());
       practiceQuizResponseDTO.setContent(attemptDetail.getQuiz().getContent());
       practiceQuizResponseDTO.setAnswers(attemptDetail.getQuiz().getAnswers());

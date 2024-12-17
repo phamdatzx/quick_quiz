@@ -98,4 +98,19 @@ public class TopicService {
 
     return ResponseEntity.ok(listTopicDTO);
   }
+
+  public ResponseEntity<TopicDTO> getTopicById(String email, int id) {
+    var topic = topicRepository.findById(id);
+    if (topic.isEmpty()) {
+      throw new ResourceNotFoundException("Topic not found");
+    }
+
+    // Check if the request is from the creator of the topic
+    if (!topic.get().getCreator().getEmail().equals(email)) {
+      throw new ForbiddenException("You are not allowed to view this topic, only the creator can view this topic");
+    }
+
+    var responseTopic = modelMapper.map(topic.get(), TopicDTO.class);
+    return ResponseEntity.ok(responseTopic);
+  }
 }

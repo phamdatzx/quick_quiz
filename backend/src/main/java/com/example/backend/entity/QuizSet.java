@@ -27,8 +27,7 @@ import lombok.NoArgsConstructor;
 public class QuizSet {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "quiz_set_seq")
-  @SequenceGenerator(name = "quiz_set_seq", sequenceName = "quiz_set_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private int id;
 
   private String name;
