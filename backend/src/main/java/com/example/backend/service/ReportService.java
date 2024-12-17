@@ -5,6 +5,7 @@ import com.example.backend.entity.QuizSet;
 import com.example.backend.entity.QuizSetReport;
 import com.example.backend.entity.ReportStatus;
 import com.example.backend.exception.ForbiddenException;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.QuizSetReportRepository;
 import com.example.backend.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
@@ -30,14 +31,14 @@ public class ReportService {
 
   ModelMapper modelMapper;
 
-  public ResponseEntity<ReportDTO> createReport(String email,ReportDTO reportDTO) {
-    if(!userRepository.findByEmail(email).get().getEmail().equals(email))
-    {
+  public ResponseEntity<ReportDTO> createReport(String email, ReportDTO reportDTO) {
+    var userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
       throw new ForbiddenException("You are not allowed to access this resource");
     }
-    var user = userRepository.findByEmail(email);
+    var user = userOptional.get();
 
-    reportDTO.setUserId(user.get().getId());
+    reportDTO.setUserId(user.getId());
 
     QuizSetReport quizSetReport = modelMapper.map(reportDTO, QuizSetReport.class);
     quizSetReport.setStatus(ReportStatus.PENDING);
@@ -46,16 +47,14 @@ public class ReportService {
     var result = quizSetReportRepository.save(quizSetReport);
 
     return ResponseEntity.ok(modelMapper.map(result, ReportDTO.class));
-
   }
 
-  public ResponseEntity<List<ReportDTO>> getAllReports(String email,String sortElement, String direction, String search, int page, int limit) {
 
-    if(!userRepository.findByEmail(email).get().getEmail().equals(email))
-    {
+  public ResponseEntity<List<ReportDTO>> getAllReports(String email, String sortElement, String direction, String search, int page, int limit) {
+    var userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
       throw new ForbiddenException("You are not allowed to access this resource");
     }
-
 
     if (direction == null) {
       direction = "asc";
@@ -75,14 +74,16 @@ public class ReportService {
     Page<QuizSetReport> reportPage = quizSetReportRepository.findAll(spec, pageable);
 
     List<ReportDTO> reportDTOs = reportPage.getContent().stream()
-        .map(report -> modelMapper.map(report, ReportDTO.class))
-        .collect(Collectors.toList());
+            .map(report -> modelMapper.map(report, ReportDTO.class))
+            .collect(Collectors.toList());
 
     return ResponseEntity.ok(reportDTOs);
   }
 
-  public ResponseEntity<ReportDTO> setStatusResolved(String email,int id, ReportStatus status) {
-    var report = quizSetReportRepository.findById(id).get();
+  public ResponseEntity<ReportDTO> setStatusResolved(String email, int id, ReportStatus status) {
+    var report = quizSetReportRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
+
     report.setStatus(ReportStatus.RESOLVED);
     var result = quizSetReportRepository.save(report);
     return ResponseEntity.ok(modelMapper.map(result, ReportDTO.class));
