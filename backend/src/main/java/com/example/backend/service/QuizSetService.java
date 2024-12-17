@@ -13,7 +13,10 @@ import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.QuizSetRepository;
 import com.example.backend.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -190,6 +193,7 @@ public class QuizSetService {
         })
         .collect(Collectors.toList());
 
+    quizSet.get().setQuizList(Optional.ofNullable(quizSet.get().getQuizList()).orElse(new ArrayList<>()));
     quizSet.get().getQuizList().addAll(quizzes);
     var updatedQuizSet = quizSetRepository.save(quizSet.get());
 

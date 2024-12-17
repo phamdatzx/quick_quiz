@@ -1,224 +1,203 @@
-// TopicServiceTest.java
 package com.example.backend.service;
 
+import com.example.backend.DTO.Topic.ListTopicDTO;
 import com.example.backend.DTO.Topic.TopicDTO;
 import com.example.backend.entity.Topic;
 import com.example.backend.entity.User;
 import com.example.backend.exception.ConflictException;
 import com.example.backend.exception.ForbiddenException;
 import com.example.backend.exception.ResourceNotFoundException;
+import com.example.backend.exception.ValidationException;
 import com.example.backend.repository.TopicRepository;
 import com.example.backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TopicServiceTest {
 
-  @Mock
-  private TopicRepository topicRepository;
+    @Mock
+    private TopicRepository topicRepository;
 
-  @Mock
-  private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-  @Mock
-  private ModelMapper modelMapper;
+    @Mock
+    private ModelMapper modelMapper;
 
-  @InjectMocks
-  private TopicService topicService;
+    @InjectMocks
+    private TopicService topicService;
 
-  @BeforeEach
-  public void setup() {
-    MockitoAnnotations.openMocks(this);
-  }
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-  @Test
-  public void testCreateTopic_ValidCase() {
-    String email = "test@example.com";
-    TopicDTO topicDTO = new TopicDTO();
-    topicDTO.setName("Test Topic");
-    topicDTO.setDescription("Test Description");
+    @Test
+    public void testCreateTopic_Success() {
+        String email = "creator@example.com";
+        TopicDTO topicDTO = new TopicDTO();
+        topicDTO.setName("New Topic");
 
-    User user = new User();
-    user.setEmail(email);
+        User user = new User();
+        user.setEmail(email);
 
-    Topic topic = new Topic();
-    topic.setName("Test Topic");
-    topic.setDescription("Test Description");
-    topic.setCreator(user);
+        Topic topic = new Topic();
+        topic.setName(topicDTO.getName());
+        topic.setCreator(user);
 
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-    when(topicRepository.findByNameAndCreatorEmail("Test Topic", email)).thenReturn(Optional.empty());
-    when(modelMapper.map(topicDTO, Topic.class)).thenReturn(topic);
-    when(topicRepository.save(any(Topic.class))).thenReturn(topic);
-    when(modelMapper.map(topic,TopicDTO.class)).thenReturn(topicDTO);
+        when(topicRepository.findByNameAndCreatorEmail(topicDTO.getName(), email)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(modelMapper.map(topicDTO, Topic.class)).thenReturn(topic);
+        when(topicRepository.save(any(Topic.class))).thenReturn(topic);
+        when(modelMapper.map(topic, TopicDTO.class)).thenReturn(topicDTO);
 
-    ResponseEntity<TopicDTO> response = topicService.createTopic(email, topicDTO);
+        ResponseEntity<TopicDTO> response = topicService.createTopic(email, topicDTO);
 
-    assertEquals(200, response.getStatusCodeValue());
-    assertEquals(topicDTO, response.getBody());
-  }
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(topicDTO, response.getBody());
+    }
 
-  @Test
-  public void testCreateTopic_TopicNameExists() {
-    String email = "test@example.com";
-    TopicDTO topicDTO = new TopicDTO();
-    topicDTO.setName("Test Topic");
-    topicDTO.setDescription("Test Description");
+    @Test
+    public void testCreateTopic_Conflict() {
+        String email = "creator@example.com";
+        TopicDTO topicDTO = new TopicDTO();
+        topicDTO.setName("Existing Topic");
 
-    User user = new User();
-    user.setEmail(email);
+        when(topicRepository.findByNameAndCreatorEmail(topicDTO.getName(), email)).thenReturn(Optional.of(new Topic()));
 
-    Topic existTopic = new Topic();
-    existTopic.setName("Test Topic");
+        ConflictException exception = assertThrows(ConflictException.class, () -> {
+            topicService.createTopic(email, topicDTO);
+        });
 
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-    when(topicRepository.findByNameAndCreatorEmail(topicDTO.getName(), email)).thenReturn(Optional.of(existTopic));
-    when(modelMapper.map(topicDTO, Topic.class)).thenReturn(existTopic);
+        assertEquals("Topic name already exists", exception.getMessage());
+    }
 
-    ConflictException exception = assertThrows(ConflictException.class, () -> {
-      topicService.createTopic(email, topicDTO);
-    });
+    @Test
+    public void testDeleteTopic_Success() {
+        String email = "creator@example.com";
+        int id = 1;
 
-    assertEquals("Topic name already exists", exception.getMessage());
-  }
+        User user = new User();
+        user.setEmail(email);
 
-  @Test
-  public void testDeleteTopic_TopicNotFound() {
-    String email = "test@example.com";
-    int topicId = 1;
+        Topic topic = new Topic();
+        topic.setCreator(user);
 
-    when(topicRepository.findById(topicId)).thenReturn(Optional.empty());
+        when(topicRepository.findById(id)).thenReturn(Optional.of(topic));
 
-    ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-      topicService.deleteTopic(email, topicId);
-    });
+        ResponseEntity<String> response = topicService.deleteTopic(email, id);
 
-    assertEquals("Topic not found", exception.getMessage());
-  }
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Topic deleted successfully", response.getBody());
+        verify(topicRepository, times(1)).deleteById(id);
+    }
 
-  @Test
-  public void testDeleteTopic_NotCreator() {
-    String email = "test@example.com";
-    int topicId = 1;
+    @Test
+    public void testDeleteTopic_NotFound() {
+        String email = "creator@example.com";
+        int id = 1;
 
-    User creator = new User();
-    creator.setEmail("creator@example.com");
+        when(topicRepository.findById(id)).thenReturn(Optional.empty());
 
-    Topic topic = new Topic();
-    topic.setId(topicId);
-    topic.setCreator(creator);
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            topicService.deleteTopic(email, id);
+        });
 
-    when(topicRepository.findById(topicId)).thenReturn(Optional.of(topic));
+        assertEquals("Topic not found", exception.getMessage());
+    }
 
-    ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
-      topicService.deleteTopic(email, topicId);
-    });
+    @Test
+    public void testDeleteTopic_Forbidden() {
+        String email = "creator@example.com";
+        int id = 1;
 
-    assertEquals("You are not allowed to delete this topic, only creator can delete this topic", exception.getMessage());
-  }
+        User anotherUser = new User();
+        anotherUser.setEmail("another@example.com");
 
-  @Test
-  public void testDeleteTopic_Success() {
-    String email = "test@example.com";
-    int topicId = 1;
+        Topic topic = new Topic();
+        topic.setCreator(anotherUser);
 
-    User creator = new User();
-    creator.setEmail(email);
+        when(topicRepository.findById(id)).thenReturn(Optional.of(topic));
 
-    Topic topic = new Topic();
-    topic.setId(topicId);
-    topic.setCreator(creator);
+        ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
+            topicService.deleteTopic(email, id);
+        });
 
-    when(topicRepository.findById(topicId)).thenReturn(Optional.of(topic));
-    doNothing().when(topicRepository).deleteById(topicId);
+        assertEquals("You are not allowed to delete this topic, only creator can delete this topic", exception.getMessage());
+    }
 
-    ResponseEntity<String> response = topicService.deleteTopic(email, topicId);
+    @Test
+    public void testUpdateTopic_Success() {
+        String email = "creator@example.com";
+        int id = 1;
 
-    assertEquals(200, response.getStatusCodeValue());
-    assertEquals("Topic deleted successfully", response.getBody());
-  }
+        TopicDTO topicDTO = new TopicDTO();
+        topicDTO.setName("Updated Topic");
 
-  @Test
-  public void testUpdateTopic_TopicNotFound() {
-    String email = "test@example.com";
-    int topicId = 1;
-    TopicDTO topicDTO = new TopicDTO();
+        User user = new User();
+        user.setEmail(email);
 
-    when(topicRepository.findById(topicId)).thenReturn(Optional.empty());
+        Topic topic = new Topic();
+        topic.setId(id);
+        topic.setCreator(user);
 
-    ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-      topicService.updateTopic(email, topicId, topicDTO);
-    });
+        Topic updatedTopic = new Topic();
+        updatedTopic.setId(id);
+        updatedTopic.setCreator(user);
+        updatedTopic.setName(topicDTO.getName());
 
-    assertEquals("Topic not found", exception.getMessage());
-  }
+        when(topicRepository.findById(id)).thenReturn(Optional.of(topic));
+        when(modelMapper.map(topicDTO, Topic.class)).thenReturn(updatedTopic);
+        when(topicRepository.save(any(Topic.class))).thenReturn(updatedTopic);
+        when(modelMapper.map(updatedTopic, TopicDTO.class)).thenReturn(topicDTO);
 
-  @Test
-  public void testUpdateTopic_NotCreator() {
-    String email = "test@example.com";
-    int topicId = 1;
-    TopicDTO topicDTO = new TopicDTO();
+        ResponseEntity<TopicDTO> response = topicService.updateTopic(email, id, topicDTO);
 
-    User creator = new User();
-    creator.setEmail("creator@example.com");
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(topicDTO, response.getBody());
+    }
 
-    Topic topic = new Topic();
-    topic.setId(topicId);
-    topic.setCreator(creator);
+    @Test
+    public void testGetAllTopics_Success() {
+        String email = "creator@example.com";
+        int page = 1, limit = 10;
 
-    when(topicRepository.findById(topicId)).thenReturn(Optional.of(topic));
+        User user = new User();
+        user.setEmail(email);
 
-    ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
-      topicService.updateTopic(email, topicId, topicDTO);
-    });
+        Topic topic = new Topic();
+        topic.setName("Topic 1");
 
-    assertEquals("You are not allowed to update this topic, only creator can update this topic", exception.getMessage());
-  }
+        List<Topic> topicList = List.of(topic);
+        Page<Topic> topicPage = new PageImpl<>(topicList);
 
-  @Test
-  public void testUpdateTopic_Success() {
-    String email = "test@example.com";
-    int topicId = 1;
-    TopicDTO topicDTO = new TopicDTO();
-    topicDTO.setName("Updated Topic");
-    topicDTO.setDescription("Updated Description");
+        TopicDTO topicDTO = new TopicDTO();
+        topicDTO.setName("Topic 1");
 
-    User creator = new User();
-    creator.setEmail(email);
+        when(topicRepository.findAllByCreatorEmail(email, PageRequest.of(page - 1, limit))).thenReturn(topicPage);
+        when(modelMapper.map(topic, TopicDTO.class)).thenReturn(topicDTO);
 
-    Topic topic = new Topic();
-    topic.setId(topicId);
-    topic.setCreator(creator);
+        ResponseEntity<ListTopicDTO> response = topicService.getAllTopics(email, page, limit);
 
-    Topic updatedTopic = new Topic();
-    updatedTopic.setId(topicId);
-    updatedTopic.setName("Updated Topic");
-    updatedTopic.setDescription("Updated Description");
-    updatedTopic.setCreator(creator);
-
-    when(topicRepository.findById(topicId)).thenReturn(Optional.of(topic));
-    when(modelMapper.map(topicDTO, Topic.class)).thenReturn(updatedTopic);
-    when(topicRepository.save(updatedTopic)).thenReturn(updatedTopic);
-    when(modelMapper.map(updatedTopic, TopicDTO.class)).thenReturn(topicDTO);
-
-    ResponseEntity<TopicDTO> response = topicService.updateTopic(email, topicId, topicDTO);
-
-    assertEquals(200, response.getStatusCodeValue());
-    assertEquals(topicDTO, response.getBody());
-  }
-
-
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getTopics().size());
+        assertEquals("Topic 1", response.getBody().getTopics().get(0).getName());
+    }
 }
